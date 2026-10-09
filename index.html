@@ -1,0 +1,1865 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Tutoring Financial Model</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+/* Layout concept: a working brief for a review meeting. Sticky section index, live model + charts first, the full proposal as expandable sections at the end. */
+:root{
+  --bg:#f9f9f7; --surface:#fcfcfb; --ink:#0b0b0b; --ink2:#52514e; --muted:#6f6d68;
+  --grid:#e1e0d9; --axis:#c3c2b7; --line:rgba(11,11,11,.12); --tint:#f1f0ec;
+  --c1:#2a78d6; --c2:#eb6834; --c3:#1baf7a;
+  --good:#0ca30c; --goodtext:#006300; --crit:#d03b3b; --crittext:#b02a2a; --warn:#fab219; --warntext:#7a5200;
+  --accent:#184f95; --accent-soft:#e6eefa;
+  --sans:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0d0d0d; --surface:#1a1a19; --ink:#ffffff; --ink2:#c3c2b7; --muted:#a09e96;
+    --grid:#2c2c2a; --axis:#383835; --line:rgba(255,255,255,.12); --tint:#222220;
+    --c1:#3987e5; --c2:#d95926; --c3:#199e70;
+    --good:#0ca30c; --goodtext:#4ccf4c; --crit:#d03b3b; --crittext:#ff8585; --warn:#fab219; --warntext:#fab219;
+    --accent:#6da7ec; --accent-soft:#16253a; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0d0d0d; --surface:#1a1a19; --ink:#ffffff; --ink2:#c3c2b7; --muted:#a09e96;
+  --grid:#2c2c2a; --axis:#383835; --line:rgba(255,255,255,.12); --tint:#222220;
+  --c1:#3987e5; --c2:#d95926; --c3:#199e70;
+  --good:#0ca30c; --goodtext:#4ccf4c; --crit:#d03b3b; --crittext:#ff8585; --warn:#fab219; --warntext:#fab219;
+  --accent:#6da7ec; --accent-soft:#16253a; color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.55;padding-inline:16px;padding-block:0 64px}
+.wrap{max-width:1120px;margin-inline:auto}
+h1,h2,h3,h4{text-wrap:balance;line-height:1.2;margin:0}
+p{margin:0}
+a{color:var(--accent)}
+button{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.mono{font-family:var(--mono)}
+.num{font-family:var(--mono);font-variant-numeric:tabular-nums}
+
+/* top bar */
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--bg);border-bottom:1px solid var(--line);margin-inline:-16px;padding-inline:16px}
+.bar-in{max-width:1120px;margin-inline:auto;display:flex;align-items:center;gap:12px;min-height:46px}
+.bar nav{display:flex;gap:2px;overflow-x:auto;flex:1;min-width:0;scrollbar-width:none}
+.bar nav::-webkit-scrollbar{display:none}
+.bar nav a{white-space:nowrap;text-decoration:none;color:var(--ink2);padding:6px 10px;border-radius:4px;font-size:13px}
+.bar nav a:hover{background:var(--tint);color:var(--ink)}
+.btn{background:var(--surface);border:1px solid var(--line);border-radius:4px;padding:5px 11px;font-size:13px;cursor:pointer}
+.btn:hover{background:var(--tint)}
+.btn[aria-pressed="true"]{background:var(--accent);color:var(--bg);border-color:var(--accent)}
+
+/* header */
+.head{padding-block:36px 8px;display:grid;gap:14px}
+.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink2)}
+.head h1{font-size:clamp(26px,4.4vw,40px);font-weight:600;letter-spacing:-.01em}
+.head .lede{max-width:68ch;color:var(--ink2);font-size:16px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{font-size:12.5px;border:1px solid var(--line);border-radius:999px;padding:3px 11px;background:var(--surface);color:var(--ink2)}
+.chip.warn{border-color:var(--warn);color:var(--warntext)}
+
+section.blk{padding-block:40px 4px;scroll-margin-top:60px}
+.blk>h2{font-size:22px;font-weight:600;margin-bottom:6px}
+.blk>.intro{color:var(--ink2);max-width:72ch;margin-bottom:18px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:18px}
+.tag{font-family:var(--mono);font-size:11.5px;letter-spacing:.05em;text-transform:uppercase;color:var(--ink2)}
+
+/* split bar */
+.split{display:grid;gap:12px}
+.splitbar{display:flex;height:44px;border-radius:4px;overflow:hidden;gap:2px;background:var(--surface)}
+.splitbar>div{display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:12.5px;color:#fff;min-width:0;overflow:hidden;white-space:nowrap}
+.seg-t{background:var(--c1)} .seg-m{background:var(--c2)} .seg-o{background:var(--c3)} .seg-neg{background:var(--crit)}
+.legend{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:13px;color:var(--ink2)}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px;vertical-align:-1px}
+.headline{font-size:clamp(19px,2.6vw,25px);font-weight:600;max-width:34ch}
+
+/* playground */
+.play{display:grid;grid-template-columns:minmax(0,320px) minmax(0,1fr);gap:18px;align-items:start}
+@media(max-width:820px){.play{grid-template-columns:minmax(0,1fr)}}
+.ctl{display:grid;gap:14px}
+.ctl label{display:grid;gap:4px;font-size:13.5px}
+.ctl .row{display:flex;justify-content:space-between;gap:8px;align-items:baseline}
+.ctl output{font-family:var(--mono);font-size:13px;color:var(--ink)}
+.ctl input[type=range]{width:100%;accent-color:var(--accent);margin:0}
+.ctl .hint{font-size:12px;color:var(--ink2)}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,170px),1fr));gap:10px}
+.kpi{border:1px solid var(--line);border-radius:6px;padding:12px 14px;display:grid;gap:3px;background:var(--surface);min-width:0}
+.kpi .k{font-size:12.5px;color:var(--ink2)}
+.kpi .v{font-family:var(--mono);font-size:22px;font-weight:500;font-variant-numeric:tabular-nums}
+.kpi .s{font-size:12.5px;color:var(--ink2)}
+.kpi.bad{border-color:var(--crit)} .kpi.bad .v{color:var(--crittext)}
+.kpi.ok .v{color:var(--goodtext)}
+.alert{border:1px solid var(--crit);border-radius:6px;padding:10px 14px;color:var(--crittext);font-size:14px}
+.alert[hidden]{display:none}
+.stack{display:grid;gap:14px;min-width:0}
+
+/* charts */
+.charts{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,500px),1fr));gap:16px}
+.chart{display:grid;gap:8px;align-content:start;min-width:0}
+.chart h3{font-size:16.5px;font-weight:600;max-width:46ch}
+.chart .sub{font-size:13px;color:var(--ink2);max-width:60ch}
+.plot svg{display:block;width:100%;height:auto;overflow:visible}
+svg text{font-family:var(--mono);font-size:11px;fill:var(--ink2)}
+svg .vl{fill:var(--ink);font-size:11.5px;font-weight:500}
+svg .ax{fill:var(--muted)}
+svg .gl{stroke:var(--grid);stroke-width:1}
+svg .zl{stroke:var(--axis);stroke-width:1.5}
+.tv{font-size:13px}
+.tv summary{cursor:pointer;color:var(--accent);width:max-content}
+.tbl{overflow-x:auto;margin-block:10px}
+.tbl table{border-collapse:collapse;width:100%;min-width:420px}
+.tbl th,.tbl td{text-align:left;padding:7px 10px;border-bottom:1px solid var(--line);vertical-align:top;font-size:13.5px}
+.tbl th{font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:var(--ink2);font-weight:500}
+.tbl td.r,.tbl th.r{text-align:right;font-family:var(--mono);font-variant-numeric:tabular-nums}
+.note{font-size:12.5px;color:var(--ink2);border-left:2px solid var(--axis);padding-left:10px;max-width:80ch}
+.tabs{display:flex;flex-wrap:wrap;gap:6px}
+.cap{font-size:14.5px;max-width:70ch;min-height:3em}
+#tip{position:fixed;z-index:50;pointer-events:none;background:var(--ink);color:var(--bg);font-size:12.5px;padding:6px 9px;border-radius:4px;max-width:260px;line-height:1.4;opacity:0;transition:opacity .08s}
+#tip.on{opacity:1}
+
+/* lifecycle */
+.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,128px),1fr));gap:8px}
+.step{text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:10px 11px;cursor:pointer;display:grid;gap:4px;align-content:start;min-width:0}
+.step:hover{border-color:var(--axis)}
+.step[aria-expanded="true"]{border-color:var(--accent);background:var(--accent-soft)}
+.step .n{font-family:var(--mono);font-size:11.5px;color:var(--ink2)}
+.step .t{font-size:13.5px;font-weight:500;line-height:1.3}
+.step .w{font-size:11.5px;color:var(--ink2)}
+.step .w.ext{color:var(--warntext)}
+.detail{margin-top:10px;display:grid;gap:8px;min-height:6em}
+.detail h4{font-size:15.5px}
+.detail ul{margin:0;padding-left:18px;display:grid;gap:3px;font-size:14px}
+.doms{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:12px;margin-top:16px}
+.dom{display:grid;gap:6px;align-content:start}
+.dom h4{font-size:15px}
+.dom .who{font-size:12.5px;color:var(--ink2)}
+.dom ul{margin:0;padding-left:18px;font-size:13.5px;display:grid;gap:2px}
+.dom.d1{border-top:3px solid var(--c1)} .dom.d2{border-top:3px solid var(--c2)} .dom.d3{border-top:3px solid var(--c3)}
+
+/* meeting points */
+.pts{display:grid;gap:10px}
+.pt{background:var(--surface);border:1px solid var(--line);border-radius:6px}
+.pt>summary{list-style:none;cursor:pointer;display:flex;gap:12px;align-items:baseline;padding:13px 16px}
+.pt>summary::-webkit-details-marker{display:none}
+.pt>summary::before{content:"";width:7px;height:7px;border-right:2px solid var(--ink2);border-bottom:2px solid var(--ink2);transform:rotate(-45deg);flex:none;margin-top:3px;transition:transform .12s}
+.pt[open]>summary::before{transform:rotate(45deg)}
+.pt .ph{font-weight:600;font-size:15.5px;flex:1;min-width:0}
+.pt .pri{font-family:var(--mono);font-size:11px;letter-spacing:.05em;text-transform:uppercase;border-radius:3px;padding:2px 7px;border:1px solid var(--line);color:var(--ink2);flex:none}
+.pt .pri.hi{border-color:var(--crit);color:var(--crittext)}
+.pt .pb{padding:0 16px 16px 35px;display:grid;gap:8px;font-size:14.5px;max-width:80ch}
+.pt .ask{background:var(--tint);border-radius:4px;padding:8px 12px;font-size:14px}
+.pt .ask b{font-weight:600}
+
+/* decisions */
+.grp{margin-top:16px}
+.grp h3{font-size:14px;font-weight:600;margin-bottom:4px}
+.dec td:first-child{width:34px}
+.dec input[type=checkbox]{width:17px;height:17px;accent-color:var(--accent)}
+.dec tr.done td:nth-child(2){font-weight:600}
+.flag{color:var(--crittext);font-weight:600}
+.prog{font-family:var(--mono);font-size:13px;color:var(--ink2)}
+
+/* full proposal */
+.fp-tools{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.sec{border:1px solid var(--line);border-radius:6px;background:var(--surface);margin-bottom:8px;scroll-margin-top:60px}
+.sec>summary{list-style:none;cursor:pointer;display:flex;gap:14px;align-items:baseline;padding:13px 16px}
+.sec>summary::-webkit-details-marker{display:none}
+.sec>summary::after{content:"";width:7px;height:7px;border-right:2px solid var(--ink2);border-bottom:2px solid var(--ink2);transform:rotate(-45deg);margin-left:auto;flex:none;transition:transform .12s}
+.sec[open]>summary::after{transform:rotate(45deg)}
+.secn{font-family:var(--mono);font-size:12.5px;color:var(--ink2)}
+.sect{font-weight:600;font-size:16px}
+.prose{padding:2px 18px 18px;max-width:84ch;display:grid;gap:12px}
+.prose h2{font-size:15.5px;font-weight:600;margin-top:10px}
+.prose h3{font-size:14.5px;font-weight:600;margin-top:6px}
+.prose ul,.prose ol{margin:0;padding-left:22px;display:grid;gap:4px}
+.prose .tbl{max-width:100%}
+.prose math{font-size:1.1em}
+.prose math[display="block"]{display:block;margin:6px 0;overflow-x:auto}
+.prose strong{font-weight:600}
+.foot{margin-top:40px;font-size:13px;color:var(--ink2);max-width:80ch;display:grid;gap:6px}
+.short{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:12px;margin-top:12px}
+.short .big{font-family:var(--mono);font-size:26px;font-weight:500;margin-bottom:6px}
+.short p{color:var(--ink2);font-size:14.5px}
+.cta{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+a.btn{text-decoration:none;display:inline-block;color:var(--ink)}
+.btn.pri,a.btn.pri{background:var(--accent);color:var(--bg);border-color:var(--accent)}
+.q{font-size:13px;color:var(--ink2)}
+.more summary{cursor:pointer;color:var(--accent);font-size:13.5px;width:max-content}
+.morebody{display:grid;gap:14px;margin-top:12px}
+.part{font-family:var(--mono);font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink2);margin-bottom:6px}
+.start h2{font-size:19px;margin-bottom:8px}
+.start p{max-width:70ch;color:var(--ink2)}
+.start ul{margin:10px 0 14px;padding-left:20px;display:grid;gap:4px;max-width:72ch}
+.h3{font-size:16px;font-weight:600;margin-bottom:6px}
+.two{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:12px;margin-top:12px}
+.two p{font-size:14.5px;color:var(--ink2)}
+.rules{margin:0;padding-left:22px;display:grid;gap:8px;max-width:78ch}
+.plain{margin:0;padding-left:20px;display:grid;gap:4px;font-size:14.5px}
+.gl2{display:grid;grid-template-columns:minmax(0,210px) minmax(0,1fr);gap:10px 18px;margin:0}
+.gl2 dt{font-weight:600;font-size:14px}
+.gl2 dd{margin:0;font-size:14.5px;color:var(--ink2)}
+@media(max-width:620px){.gl2{grid-template-columns:minmax(0,1fr);gap:2px}.gl2 dd{margin-bottom:10px}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<div class="bar"><div class="bar-in">
+  <nav aria-label="Sections"><a href="#short">1 Summary</a><a href="#how">2 How it works</a><a href="#model">3 Try it</a><a href="#charts">4 Charts</a><a href="#cash">5 Cash flow</a><a href="#raise">6 Points to consider</a><a href="#decisions">7 Decisions</a><a href="#gloss">Glossary</a><a href="#full">Full proposal</a></nav>
+  <button class="btn" id="theme" type="button">Theme</button>
+</div></div>
+
+<div class="wrap">
+<header class="head">
+  <div class="eyebrow">Phase 5 · Configurable pricing, billing and financial management</div>
+  <h1>Tutoring Platform: financial model review</h1>
+  <p class="lede">A self-guided review of the proposed financial model for project owners, legal counsel, the accounting adviser and the technical team. It explains the model, shows what the numbers do, and lists the decisions that are still open.</p>
+  <div class="chips"><span class="chip warn">Proposed, pending approval</span><span class="chip">Illustrative figures in SAR</span></div>
+</header>
+
+<section class="blk" id="start" style="padding-block-start:18px">
+  <div class="card start">
+    <h2>Read this first</h2>
+    <p>This page explains the model on its own, so you can read it before the meeting. It takes about 15 minutes. The meeting is for your questions and for the open decisions in Part 7.</p>
+    <ul>
+      <li><b>Nothing here is approved.</b> All figures are the document's illustrative examples in SAR.</li>
+      <li><b>Parts 1 to 7 are the guided path.</b> The glossary and full proposal at the end are for reference.</li>
+      <li><b>Charts and sliders are interactive.</b> Change a number to see what it does.</li>
+    </ul>
+    <div class="tbl"><table>
+      <thead><tr><th>If you are</th><th>Read</th><th>Look closely at</th></tr></thead>
+      <tbody>
+        <tr><td>Project owner</td><td>Parts 1, 3, 4, 5, 6, 7</td><td>Who carries the risk of unpaid sessions, when staff are paid, the cash reserve, SaaS pricing</td></tr>
+        <tr><td>Legal counsel</td><td>Parts 2, 6, 7</td><td>Full proposal <a href="#s2">2</a> (parties), <a href="#s10">10</a> (staff pay), <a href="#s14">14</a> (refunds), <a href="#s15">15</a> (SaaS), <a href="#s17">17</a> (open decisions)</td></tr>
+        <tr><td>Accounting adviser</td><td>Parts 2, 4, 5, 7</td><td>Full proposal <a href="#s9">9</a> (receivables), <a href="#s11">11</a> (cash and reserve), <a href="#s12">12</a> (break-even); tax and invoicing</td></tr>
+        <tr><td>Technical team</td><td>Part 2</td><td>Full proposal <a href="#s7">7</a> (lifecycle), <a href="#s8">8</a> (verification), <a href="#s16">16</a> (records), <a href="#s18">18</a> (sequence)</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+</section>
+
+<section class="blk" id="short">
+  <div class="part">Part 1 of 7</div><h2>The short version</h2>
+  <div class="short">
+    <div class="card"><div class="big">SAR 3 of 105</div><p>A parent pays SAR 105 for one session. SAR 100 goes to the teacher and SAR 2 to the Manager. Only SAR 3 is left to run operations.</p></div>
+    <div class="card"><div class="big">1,000 sessions</div><p>That is how many sessions a month it takes for SAR 3 each to cover SAR 3,000 of monthly costs.</p></div>
+    <div class="card"><div class="big">3 unpaid in 100</div><p>If staff are still paid when a parent never pays, about 3 unpaid sessions in every 100 wipe out that SAR 3. Who carries this risk is not yet decided.</p></div>
+  </div>
+  <div class="cta"><a class="btn pri" href="#model">Try other numbers</a><a class="btn" href="#raise">Go to the meeting points</a></div>
+</section>
+
+<section class="blk" id="how">
+  <div class="part">Part 2 of 7</div><h2>How the model works</h2>
+  <p class="intro">Five rules in plain words, how a parent is priced, and the path every session takes from verification to payment.</p>
+  <div class="card">
+    <h3 class="h3">The five rules</h3>
+    <ol class="rules">
+      <li><b>Teacher pay comes from the teacher's agreement.</b> The Manager drafts it, and the Admin sets the lowest and highest session rate that can be approved without an exception.</li>
+      <li><b>The parent's price is set by the pricing arrangement.</b> Usually the teacher's rate plus an operational fee the Admin configures.</li>
+      <li><b>Manager pay is a percentage of the teacher's session rate.</b> It is defined in the Manager's own agreement.</li>
+      <li><b>Parents pay before (prepaid) or after (postpaid) the sessions.</b> The Admin decides which arrangements the organization accepts.</li>
+      <li><b>In the first release the platform does not move money.</b> Payments happen outside it. The platform records them with evidence and the Admin verifies them.</li>
+    </ol>
+  </div>
+  <div class="two">
+    <div class="card"><h3 class="h3">Model A: rate plus fee</h3><p>The parent pays the teacher's rate plus a percentage fee. At SAR 100 and 5%, the parent pays SAR 105. This is the model drawn in the charts.</p></div>
+    <div class="card"><h3 class="h3">Model B: fixed price</h3><p>The parent pays a fixed amount the organization sets. Teacher and Manager pay are still calculated from their own agreements. No fee is added automatically.</p></div>
+    <div class="card"><h3 class="h3">Prepaid</h3><p>The parent pays in advance. A session is allowed only against a verified payment, not just an uploaded receipt. Unused balance, refunds and cancellations need a policy decision.</p></div>
+    <div class="card"><h3 class="h3">Postpaid</h3><p>The parent pays after the sessions, on an invoice with a due date. The platform tracks what is outstanding and overdue. Who may be postpaid, and who approves it, is not yet decided.</p></div>
+  </div>
+  <h3 class="h3" style="margin-top:22px">How a session becomes money</h3>
+  <p class="intro" style="margin-bottom:12px">Select a stage. The money side starts when a session is verified, not when it is scheduled.</p>
+
+  <div class="steps" id="steps"></div>
+  <div class="card detail" id="detail" aria-live="polite" style="margin-top:10px"></div>
+  <div class="doms">
+    <div class="card dom d1"><h4>Customer billing</h4><div class="who">Parents owe the organization</div><ul><li>Invoices, prepaid balances, overdue aging</li><li>Reduced only by verified, allocated payments</li></ul></div>
+    <div class="card dom d2"><h4>Staff compensation</h4><div class="who">The organization owes teachers, Managers and eligible Admin staff</div><ul><li>Earnings, approvals, payments, remaining payable</li><li>Not cancelled because a parent has not paid</li></ul></div>
+    <div class="card dom d3"><h4>SaaS subscription</h4><div class="who">The organization owes the platform operator</div><ul><li>Own agreement, invoices and balance</li><li>Not deducted from a parent's payment</li></ul></div>
+  </div>
+  <p class="note" style="margin-top:12px">These three are never shown as one balance. Each has its own records, status changes, authorization rules and audit trail.</p>
+
+
+
+  <div class="card" style="margin-top:16px">
+    <h3 class="h3">What the first release does not do</h3>
+    <ul class="plain">
+      <li>It does not process payments or transfer money.</li>
+      <li>It does not charge SaaS subscriptions.</li>
+      <li>It does not add interest, penalties or collection fees without an approved rule and legal review.</li>
+      <li>It does not treat an unpaid invoice as cash, or an operational fee as profit.</li>
+      <li>It does not cancel a teacher's earned pay because a parent has not paid.</li>
+    </ul>
+  </div>
+</section>
+
+<section class="blk" id="model">
+  <div class="part">Part 3 of 7</div><h2>Try the numbers</h2>
+  <p class="intro">Move a slider to see where a parent's payment goes. The charts below follow what you set. It starts at the proposal's own example.</p>
+  <div class="play">
+    <div class="card ctl" id="controls" aria-label="Model inputs"></div>
+    <div class="stack">
+      <div class="card split">
+        <div class="tag">One session, parent total</div>
+        <div class="headline" id="headline"></div>
+        <div class="splitbar" id="splitbar" role="img" aria-label="Split of the parent's payment"></div>
+        <div class="legend" id="legend"></div>
+      </div>
+      <div class="alert" id="alert" hidden role="alert"></div>
+      <div class="kpis" id="kpis"></div>
+    </div>
+  </div>
+</section>
+
+<section class="blk" id="charts">
+  <div class="part">Part 4 of 7</div><h2>Charts</h2>
+  <p class="intro">Pick a question. Each chart answers one thing and follows the numbers you set above.</p>
+  <div class="tabs" id="ctabs" role="group" aria-label="Chart"></div>
+  <article class="card chart" data-chart="0" style="margin-top:12px">
+    <p class="q">How much does the Manager's commission eat into what is left?</p>
+    <h3 id="h2t"></h3>
+    <div class="plot" id="c2"></div>
+    <p class="sub">Left for operations on one session at each Manager rate. It equals the teacher rate × (fee % − Manager %).</p>
+    <details class="tv"><summary>Table view</summary><div class="tbl" id="t2"></div></details>
+  </article>
+  <article class="card chart" data-chart="1" style="margin-top:12px" hidden>
+    <p class="q">How many sessions are needed to cover the monthly costs?</p>
+    <h3 id="h3t"></h3>
+    <div class="plot" id="c3"></div>
+    <p class="sub">Assumes every fee is collected.</p>
+    <details class="tv"><summary>Table view</summary><div class="tbl" id="t3"></div></details>
+  </article>
+  <article class="card chart" data-chart="2" style="margin-top:12px" hidden>
+    <p class="q">Does the answer change with the teacher's rate?</p>
+    <h3 id="h5t"></h3>
+    <div class="plot" id="c5"></div>
+    <p class="sub">Sessions needed per month across the Admin's permitted teacher rates, with your fee and Manager settings.</p>
+    <details class="tv"><summary>Table view</summary><div class="tbl" id="t5"></div></details>
+  </article>
+  <article class="card chart" data-chart="3" style="margin-top:12px" hidden>
+    <p class="q">What if some parents never pay?</p>
+    <h3 id="h4t"></h3>
+    <div class="plot" id="c4"></div>
+    <p class="sub">Assumes the organization still pays the teacher and Manager for unpaid sessions. This is an illustration added for this review. The proposal leaves it undecided.</p>
+    <details class="tv"><summary>Table view</summary><div class="tbl" id="t4"></div></details>
+  </article>
+  <p class="note" style="margin-top:14px">These figures leave out refunds, taxes, other costs and any other revenue, as the proposal itself states.</p>
+</section>
+
+<section class="blk" id="cash">
+  <div class="part">Part 5 of 7</div><h2>Cash flow for one session</h2>
+  <p class="intro">One session, four situations. Pick one to see the money in and out. Dashed bars are owed but not yet paid.</p>
+  <div class="card chart">
+    <div class="tabs" id="tabs" role="group" aria-label="Scenario"></div>
+    <h3 id="hwf"></h3>
+    <div class="plot" id="cwf"></div>
+    <p class="cap" id="capwf"></p>
+    <details class="tv"><summary>Table view</summary><div class="tbl" id="twf"></div></details>
+  </div>
+</section>
+
+<section class="blk" id="raise">
+  <div class="part">Part 6 of 7</div><h2>Points to consider before the meeting</h2>
+  <p class="intro">Eight points that came out of drawing the model. The first two need a decision before billing goes live. Open a point for the reason and a question to think about before the meeting.</p>
+  <div class="pts" id="pts"></div>
+</section>
+
+<section class="blk" id="decisions">
+  <div class="part">Part 7 of 7</div><h2>Open decisions</h2>
+  <p class="intro">The 14 items the document leaves open, grouped by theme. Tick the ones you want to raise in the meeting. Ticks are saved in this browser only and are not sent to anyone.</p>
+  <div class="card">
+    <div class="prog" id="prog"></div>
+    <div id="decs"></div>
+  </div>
+</section>
+
+<section class="blk" id="gloss">
+  <div class="part">Reference</div><h2>Glossary</h2>
+  <p class="intro">Terms used on this page, in plain words.</p>
+  <div class="card"><dl class="gl2">
+    <dt>Teacher session rate</dt><dd>What the teacher earns for one qualifying session under their agreement.</dd>
+    <dt>Operational fee</dt><dd>A percentage of the teacher rate added to the parent's bill in Model A. The Admin sets it.</dd>
+    <dt>Manager commission</dt><dd>A percentage of the teacher's session rate that the Manager earns under their own agreement.</dd>
+    <dt>Left for operations</dt><dd>The operational fee minus the Manager commission. The proposal calls it the residual operating allocation. It pays for hosting, support and administration. It is not profit.</dd>
+    <dt>Qualifying session</dt><dd>A session whose outcome an authorized workflow has verified. Only these create financial records.</dd>
+    <dt>Verified payment</dt><dd>A payment the Admin has confirmed was actually received, for the right amount. Only verified payments reduce a balance.</dd>
+    <dt>Receivable</dt><dd>Money parents owe the organization.</dd>
+    <dt>Payable</dt><dd>Money the organization owes teachers, Managers and eligible staff.</dd>
+    <dt>Overdue</dt><dd>The due date has passed and a balance remains.</dd>
+    <dt>Collection risk</dt><dd>The chance that a parent never pays, and who bears the loss. This is undecided.</dd>
+    <dt>Sessions to cover costs</dt><dd>Monthly costs divided by the amount left per session. Also called break-even volume.</dd>
+    <dt>Operating reserve</dt><dd>The minimum cash the organization keeps, set by the owners with accounting advice.</dd>
+    <dt>SaaS subscription</dt><dd>The organization's separate payment to the platform operator for the software.</dd>
+  </dl></div>
+</section>
+
+<section class="blk" id="full">
+  <div class="part">Reference</div><h2>Full proposal</h2>
+  <p class="intro">The complete text of the document in expandable sections. Section numbers match the references above.</p>
+  <div class="fp-tools">
+    <button class="btn" id="expand" type="button">Expand all</button>
+    <button class="btn" id="collapse" type="button">Collapse all</button>
+  </div>
+<details class="sec" id="s1"><summary><span class="secn">01</span><span class="sect">Executive summary</span></summary><div class="prose"><p>The tutoring platform will coordinate the financial relationship
+between parents, teachers, Managers, the tutoring organization, and the
+SaaS platform operator.</p>
+<p>The financial model is based on five principles:</p>
+<ol type="1">
+<li>The teacher's compensation is determined by the agreement with the
+student/customer arrangement, including the agreed session rate and
+applicable compensation terms.</li>
+<li>The parent-facing price is determined by the applicable pricing
+arrangement, including a configurable operational fee.</li>
+<li>The Manager's compensation is a configurable percentage of the
+teacher's agreed session rate, as defined by the Manager's compensation
+agreement.</li>
+<li>Parents may use approved prepaid or postpaid arrangements. The Admin
+controls which payment arrangements the organization accepts.</li>
+<li>Customer payments and staff payments are made externally in the
+initial release and recorded in the platform with supporting evidence
+and Admin verification.</li>
+</ol>
+<p>The platform will calculate financial obligations, generate customer
+bills and statements, record payment evidence, track overdue balances,
+and report staff compensation and operating allocations.</p>
+<p>It will not initially process payments or automatically transfer
+funds.</p>
+<p>Three financial domains must remain separate:</p>
+<ul>
+<li><strong>Customer billing:</strong> Amounts parents owe the tutoring
+organization.</li>
+<li><strong>Staff compensation:</strong> Amounts the organization owes
+teachers, Managers, and eligible Admin employees.</li>
+<li><strong>SaaS subscription billing:</strong> Amounts the tutoring
+organization owes the platform operator.</li>
+</ul>
+<p>The platform will also distinguish between amounts calculated,
+amounts earned, amounts billed, payments reported, payments verified,
+and cash actually available.</p>
+<h2 id="confirmed-decisions">Confirmed decisions</h2>
+<div class="tbl"><table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Topic</th>
+<th>Agreed direction</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Teacher earnings</td>
+<td>Governed by the applicable teacher/customer arrangement and
+compensation terms</td>
+</tr>
+<tr class="even">
+<td>Payment plans</td>
+<td>Prepaid and postpaid arrangements are supported</td>
+</tr>
+<tr class="odd">
+<td>Prepaid arrangements</td>
+<td>Parent must satisfy the applicable prepaid requirement before the
+relevant service is authorized, according to the approved plan</td>
+</tr>
+<tr class="even">
+<td>Postpaid arrangements</td>
+<td>The system identifies and applies an approved postpaid plan</td>
+</tr>
+<tr class="odd">
+<td>Manager compensation</td>
+<td>Configurable percentage of the teacher's agreed session rate</td>
+</tr>
+<tr class="even">
+<td>Operational fee</td>
+<td>Configurable percentage set by the Admin</td>
+</tr>
+<tr class="odd">
+<td>Pricing boundaries</td>
+<td>Admin-configured minimum and maximum permitted teacher session
+rates</td>
+</tr>
+<tr class="even">
+<td>Payment verification</td>
+<td>Payment evidence is uploaded, the amount is entered, and the Admin
+verifies actual receipt and correctness</td>
+</tr>
+<tr class="odd">
+<td>Actual payment movement</td>
+<td>External to the platform in the initial release</td>
+</tr>
+<tr class="even">
+<td>Nonpayment risk</td>
+<td>Unresolved; reserved for the project-owner and legal review
+meeting</td>
+</tr>
+</tbody>
+</table></div>
+</div></details>
+<details class="sec" id="s2"><summary><span class="secn">02</span><span class="sect">Parties and financial responsibilities</span></summary><div class="prose"><div class="tbl"><table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Party</th>
+<th>Responsibilities</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Parent / Customer</td>
+<td>Pays for the tutoring service under the approved arrangement</td>
+</tr>
+<tr class="even">
+<td>Teacher</td>
+<td>Provides tutoring and earns compensation under the applicable
+agreement</td>
+</tr>
+<tr class="odd">
+<td>Manager</td>
+<td>Manages teacher relationships and operations and earns compensation
+under a separate agreement</td>
+</tr>
+<tr class="even">
+<td>Admin</td>
+<td>Controls approved pricing and operational policies, verifies
+payments, and oversees financial operations</td>
+</tr>
+<tr class="odd">
+<td>Tutoring organization</td>
+<td>Contracts for services, manages customer billing, owes applicable
+compensation, and pays operating expenses</td>
+</tr>
+<tr class="even">
+<td>SaaS platform operator</td>
+<td>Provides the software under a separate commercial relationship</td>
+</tr>
+</tbody>
+</table></div>
+<p>The actual legal identity of the contracting party and the legal
+classification of teachers and Managers must be confirmed during the
+review meeting.</p>
+<h2 id="separation-of-financial-domains">Separation of financial
+domains</h2>
+<p>A parent's outstanding invoice, a teacher's earned compensation, the
+Manager's commission, the organization's operational allocation, and the
+SaaS subscription must never be represented as a single undifferentiated
+balance.</p>
+<p>Each domain requires its own records, status transitions,
+authorization rules, and audit trail.</p>
+</div></details>
+<details class="sec" id="s3"><summary><span class="secn">03</span><span class="sect">Teacher contracts and permitted session rates</span></summary><div class="prose"><h2 id="teacher-agreement">3.1 Teacher agreement</h2>
+<p>The teacher enters into an agreement through the Manager or another
+authorized representative.</p>
+<p>The agreement establishes the applicable session rate and relevant
+conditions, including:</p>
+<ul>
+<li>Agreed rate and currency</li>
+<li>Applicable student/customer arrangement</li>
+<li>Effective date and contract status</li>
+<li>Session and attendance requirements</li>
+<li>Compensation eligibility</li>
+<li>Prepaid or postpaid customer arrangement, where relevant</li>
+<li>Payment schedule and due dates</li>
+<li>Contract renewal and termination</li>
+<li>Treatment of outstanding earnings when the agreement ends</li>
+</ul>
+<p>The system must preserve the terms and rate that applied to each
+financial record.</p>
+<h2 id="admin-configured-rate-boundaries">3.2 Admin-configured rate
+boundaries</h2>
+<p>The Admin configures the minimum and maximum permitted teacher
+session rates.</p>
+<p>Illustrative configuration:</p>
+<div class="tbl"><table>
+<thead>
+<tr class="header">
+<th>Setting</th>
+<th style="text-align: right;">Example</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Minimum permitted rate</td>
+<td style="text-align: right;">SAR 80</td>
+</tr>
+<tr class="even">
+<td>Maximum permitted rate</td>
+<td style="text-align: right;">SAR 150</td>
+</tr>
+<tr class="odd">
+<td>Operational-fee percentage</td>
+<td style="text-align: right;">5%</td>
+</tr>
+</tbody>
+</table></div>
+<p>These are examples, not approved commercial rates.</p>
+<p>When a Manager drafts a contract, the platform validates the proposed
+session rate.</p>
+<ul>
+<li>Below the minimum: block the normal approval path or require an
+authorized exception.</li>
+<li>Within the range: permit the contract to proceed through the normal
+approval process.</li>
+<li>Above the maximum: block the normal approval path or require an
+authorized exception.</li>
+</ul>
+<p>The Admin must control exception permissions and the system must
+audit any approved exception.</p>
+<p>New limits must not silently alter existing contracts. Changes to an
+existing rate must follow the contract's amendment and approval
+requirements.</p>
+</div></details>
+<details class="sec" id="s4"><summary><span class="secn">04</span><span class="sect">Customer pricing and the operational fee</span></summary><div class="prose"><p>The platform supports two parent-pricing models.</p>
+<h2 id="model-a-teacher-session-rate-plus-operational-fee">Model A —
+Teacher session rate plus operational fee</h2>
+<p>The parent-facing bill includes the teacher's session rate plus a
+configurable operational fee.</p>
+<p>Let:</p>
+<ul>
+<li><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>T</mi><annotation encoding="application/x-tex">T</annotation></semantics></math>
+= agreed teacher session rate</li>
+<li><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>r</mi><mi>o</mi></msub><annotation encoding="application/x-tex">r_o</annotation></semantics></math>
+= operational-fee percentage</li>
+<li><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>O</mi><annotation encoding="application/x-tex">O</annotation></semantics></math>
+= operational fee</li>
+<li><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>P</mi><annotation encoding="application/x-tex">P</annotation></semantics></math>
+= parent total before any separately applicable taxes or
+adjustments</li>
+</ul>
+<p>Then:</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>O</mi><mo>=</mo><mi>T</mi><mo>×</mo><msub><mi>r</mi><mi>o</mi></msub></mrow><annotation encoding="application/x-tex">
+O=T\times r_o
+</annotation></semantics></math></p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>P</mi><mo>=</mo><mi>T</mi><mo>+</mo><mi>O</mi></mrow><annotation encoding="application/x-tex">
+P=T+O
+</annotation></semantics></math></p>
+<p>Illustrative example:</p>
+<div class="tbl"><table>
+<thead>
+<tr class="header">
+<th>Item</th>
+<th>Calculation</th>
+<th style="text-align: right;">Amount</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Teacher session rate</td>
+<td>Contracted rate</td>
+<td style="text-align: right;">SAR 100</td>
+</tr>
+<tr class="even">
+<td>Operational fee</td>
+<td>SAR 100 × 5%</td>
+<td style="text-align: right;">SAR 5</td>
+</tr>
+<tr class="odd">
+<td><strong>Parent total</strong></td>
+<td>SAR 100 + SAR 5</td>
+<td style="text-align: right;"><strong>SAR 105</strong></td>
+</tr>
+</tbody>
+</table></div>
+<p>The Admin controls the operational-fee percentage and its applicable
+scope and effective dates.</p>
+<p>The operational fee is a configurable policy, not a hardcoded 5%
+rate.</p>
+<h2 id="model-b-fixed-customer-price">Model B — Fixed customer
+price</h2>
+<p>The organization configures a fixed customer-facing price for the
+applicable arrangement.</p>
+<p>The parent is charged the configured amount. The system calculates
+teacher and Manager compensation independently under their
+agreements.</p>
+<p>The platform must not automatically add an operational fee to a fixed
+customer price unless the applicable arrangement explicitly defines that
+fee as an additional component.</p>
+<h2 id="arrangement-selection">Arrangement selection</h2>
+<p>The organization may use different pricing models for different
+arrangements, subject to approved scope and precedence rules.</p>
+<p>The platform must preserve the pricing model and applicable
+configuration used for each issued bill.</p>
+</div></details>
+<details class="sec" id="s5"><summary><span class="secn">05</span><span class="sect">Operational-fee allocation and Manager compensation</span></summary><div class="prose"><p>The Manager's compensation is based on a configurable percentage of
+the teacher's agreed session rate.</p>
+<p>The percentage is defined by the applicable Manager compensation
+agreement. It is not inherently 40% of the operational-fee pool,
+although the amounts can coincide under particular rates.</p>
+<p>Illustrative example:</p>
+<ul>
+<li>Teacher session rate: SAR 100</li>
+<li>Operational fee: 5% of teacher rate = SAR 5</li>
+<li>Manager compensation rate: 2% of teacher rate = SAR 2</li>
+</ul>
+<div class="tbl"><table>
+<thead>
+<tr class="header">
+<th>Financial component</th>
+<th style="text-align: right;">Amount</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Teacher's contractual earning</td>
+<td style="text-align: right;">SAR 100</td>
+</tr>
+<tr class="even">
+<td>Manager's compensation allocation</td>
+<td style="text-align: right;">SAR 2</td>
+</tr>
+<tr class="odd">
+<td>Organization's residual operational allocation</td>
+<td style="text-align: right;">SAR 3</td>
+</tr>
+<tr class="even">
+<td>Parent's total charge</td>
+<td style="text-align: right;">SAR 105</td>
+</tr>
+</tbody>
+</table></div>
+<p>Under this example, the Manager receives 40% of the SAR 5
+operational-fee pool, and SAR 3 remains allocated to organizational
+operations.</p>
+<p>This outcome is a consequence of the chosen percentages, not the
+definition of the Manager's compensation method.</p>
+<h2 id="configurable-rates">Configurable rates</h2>
+<p>The Admin configures the operational-fee percentage based on the
+organization's financial forecast, including expected fixed costs and
+dynamic income.</p>
+<p>The Manager compensation percentage is configured according to the
+applicable Manager agreement and organizational approval rules.</p>
+<p>The system must validate the combined configuration. For example, it
+must not silently produce a negative residual operating allocation if
+the Manager's compensation exceeds the operational fee.</p>
+<p>If the configured rates are commercially inconsistent, the system
+should flag the arrangement for correction or authorized approval.</p>
+<h2 id="operational-allocation-is-not-profit">Operational allocation is
+not profit</h2>
+<p>The residual allocation is intended to support organizational
+operations such as hosting, technical support, maintenance,
+administration, and other approved expenses.</p>
+<p>It is not automatically net profit.</p>
+<p>The Admin dashboard should distinguish the operational allocation
+from actual recorded expenses and from any properly calculated profit
+measure.</p>
+</div></details>
+<details class="sec" id="s6"><summary><span class="secn">06</span><span class="sect">Prepaid and postpaid customer arrangements</span></summary><div class="prose"><p>The platform must support two explicitly identified payment-plan
+types.</p>
+<p>These plans control the timing and conditions of customer payment.
+They do not, by themselves, change the agreed teacher session rate or
+the Manager's compensation calculation.</p>
+<h2 id="prepaid-plan">6.1 Prepaid plan</h2>
+<p>Under a prepaid arrangement, the parent must satisfy the applicable
+advance-payment requirement before the relevant service is
+authorized.</p>
+<p>The system must identify:</p>
+<ul>
+<li>The prepaid arrangement</li>
+<li>The amount required in advance</li>
+<li>The applicable covered sessions or service period</li>
+<li>The payment deadline</li>
+<li>Whether the advance payment has been recorded and verified</li>
+<li>The remaining prepaid balance or unused credit</li>
+<li>Which sessions or services have consumed that balance</li>
+</ul>
+<p>The Admin decides which prepaid arrangements the organization accepts
+and configures their permitted terms.</p>
+<p>A session should not be treated as authorized under a prepaid
+requirement merely because a payment receipt has been uploaded. The
+applicable payment must have been verified and correctly allocated,
+subject to the approved policy.</p>
+<p>The exact consequences of insufficient prepaid balance, cancellation,
+unused credit, and refunds require policy approval.</p>
+<h2 id="postpaid-plan">6.2 Postpaid plan</h2>
+<p>Under a postpaid arrangement, the parent pays after the applicable
+service has been delivered or after the agreed billing period.</p>
+<p>The platform must identify the arrangement as postpaid and apply its
+approved billing schedule.</p>
+<p>It must track:</p>
+<ul>
+<li>Qualifying sessions</li>
+<li>Charges generated</li>
+<li>Billing period</li>
+<li>Invoice issue date</li>
+<li>Due date</li>
+<li>Payments recorded and verified</li>
+<li>Outstanding and overdue balances</li>
+</ul>
+<p>The system must not silently treat a postpaid customer as prepaid or
+vice versa.</p>
+<p>The organization must define which customers are eligible for
+postpaid arrangements and who may approve them.</p>
+<h2 id="payment-plan-enforcement">6.3 Payment-plan enforcement</h2>
+<p>The platform must validate the payment plan before allowing a session
+or billing action that depends on it.</p>
+<p>However, the precise enforcement rules—for example, whether a prepaid
+balance shortfall blocks booking, joining, or future scheduling—must
+follow the approved operational policy.</p>
+</div></details>
+<details class="sec" id="s7"><summary><span class="secn">07</span><span class="sect">Session verification and financial record creation</span></summary><div class="prose"><p>The financial lifecycle begins with a verified qualifying event, not
+merely a scheduled session.</p>
+<h2 id="stage-1-contract-approval">Stage 1 — Contract approval</h2>
+<p>The teacher agreement, customer pricing arrangement, operational-fee
+configuration, and relevant compensation agreements are approved and
+active.</p>
+<h2 id="stage-2-session-outcome">Stage 2 — Session outcome</h2>
+<p>The session is conducted, cancelled, or otherwise resolved through
+the existing session workflow.</p>
+<h2 id="stage-3-verification">Stage 3 — Verification</h2>
+<p>The applicable authorized workflow confirms the session outcome and
+relevant evidence.</p>
+<h2 id="stage-4-financial-calculation">Stage 4 — Financial
+calculation</h2>
+<p>The system resolves the applicable contract, pricing model,
+operational fee, compensation agreements, and billing policies.</p>
+<p>It then creates separate linked financial records for:</p>
+<ul>
+<li>Customer charge or credit</li>
+<li>Teacher compensation earning, when earned under the agreement</li>
+<li>Manager compensation earning, when earned under the agreement</li>
+<li>Operational allocation</li>
+<li>Applicable calculation snapshots and source references</li>
+</ul>
+<h2 id="stage-5-customer-billing">Stage 5 — Customer billing</h2>
+<p>For postpaid arrangements, the applicable charge enters the billing
+workflow and is invoiced according to the approved schedule.</p>
+<p>For prepaid arrangements, the system applies the approved
+prepaid-balance rules and records the consumption or allocation of the
+advance payment.</p>
+<h2 id="stage-6-payment-recording-and-verification">Stage 6 — Payment
+recording and verification</h2>
+<p>The parent or other payer pays externally. An authorized user uploads
+the supporting receipt or evidence and enters the amount.</p>
+<p>The Admin checks whether the money was actually received and whether
+the amount is correct. Once verified, the payment is allocated to the
+relevant customer balance.</p>
+<h2 id="stage-7-staff-payment-recording">Stage 7 — Staff payment
+recording</h2>
+<p>Teacher and Manager compensation payments are made externally and
+recorded against the appropriate payable records.</p>
+<p>The system updates payment and outstanding balances without rewriting
+the original earnings.</p>
+</div></details>
+<details class="sec" id="s8"><summary><span class="secn">08</span><span class="sect">Payment verification procedure</span></summary><div class="prose"><p>The initial platform release does not process money. It records
+external payments and supports a controlled verification workflow.</p>
+<h2 id="required-payment-evidence">Required payment evidence</h2>
+<p>A payment record should include:</p>
+<ul>
+<li>Payer or recipient</li>
+<li>Amount and currency</li>
+<li>Payment date</li>
+<li>Payment method or external channel, where applicable</li>
+<li>Receipt or supporting evidence upload</li>
+<li>External transaction reference, if available</li>
+<li>Relevant invoice or compensation statement</li>
+<li>User who recorded the payment</li>
+<li>Verification status</li>
+<li>Admin verifier and verification timestamp</li>
+<li>Reason for rejection or correction, where applicable</li>
+</ul>
+<h2 id="verification-states">Verification states</h2>
+<p>The proposed workflow is:</p>
+<ol type="1">
+<li><strong>Awaiting verification:</strong> Evidence has been uploaded
+and the amount entered.</li>
+<li><strong>Verified:</strong> The Admin has confirmed receipt or
+disbursement, as appropriate, and checked the amount and
+allocation.</li>
+<li><strong>Rejected:</strong> The evidence or amount is invalid or does
+not match the actual transaction.</li>
+<li><strong>Corrected or reversed:</strong> An existing entry requires a
+traceable correction.</li>
+</ol>
+<p>The uploaded receipt is supporting evidence; it is not proof by
+itself that the funds reached the intended account.</p>
+<p>A payment must not reduce an outstanding balance until it has been
+verified and correctly allocated.</p>
+<p>The system must preserve verification history and must not silently
+overwrite a previously verified transaction.</p>
+<p>For staff payments, the same principle applies: the system records
+the evidence and the Admin verifies that the external payment was
+actually made. Whether a second person must review certain payments
+remains a governance decision for the owners.</p>
+</div></details>
+<details class="sec" id="s9"><summary><span class="secn">09</span><span class="sect">Customer receivables and overdue balances</span></summary><div class="prose"><p>The platform must distinguish an issued invoice from a payment and
+from the remaining amount owed.</p>
+<h2 id="outstanding-balance">Outstanding balance</h2>
+<p>At a basic level:</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mtext mathvariant="normal">Outstanding Balance</mtext><mo>=</mo><mtext mathvariant="normal">Issued Charges</mtext><mo>−</mo><mtext mathvariant="normal">Verified Allocated Payments</mtext><mo>−</mo><mtext mathvariant="normal">Applicable Credits</mtext><mo>+</mo><mtext mathvariant="normal">Applicable Adjustments</mtext></mrow><annotation encoding="application/x-tex">
+\text{Outstanding Balance}
+=
+\text{Issued Charges}
+-
+\text{Verified Allocated Payments}
+-
+\text{Applicable Credits}
++
+\text{Applicable Adjustments}
+</annotation></semantics></math></p>
+<p>The final calculation must account for reversals, refunds, and credit
+balances according to approved accounting rules.</p>
+<h2 id="overdue-definition">Overdue definition</h2>
+<p>An invoice becomes overdue when its approved due date has passed and
+it still has an outstanding balance, subject to the applicable dispute
+and credit policies.</p>
+<p>Proposed reporting categories:</p>
+<div class="tbl"><table>
+<thead>
+<tr class="header">
+<th>Category</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Not yet due</td>
+<td>Payment deadline has not passed</td>
+</tr>
+<tr class="even">
+<td>1–7 days overdue</td>
+<td>Short-term overdue</td>
+</tr>
+<tr class="odd">
+<td>8–30 days overdue</td>
+<td>Follow-up required</td>
+</tr>
+<tr class="even">
+<td>31–60 days overdue</td>
+<td>Elevated collection concern</td>
+</tr>
+<tr class="odd">
+<td>61–90 days overdue</td>
+<td>Serious collection concern</td>
+</tr>
+<tr class="even">
+<td>More than 90 days overdue</td>
+<td>Escalated review</td>
+</tr>
+</tbody>
+</table></div>
+<p>These categories are configurable reporting suggestions, not legal
+definitions.</p>
+<h2 id="overdue-workflow">Overdue workflow</h2>
+<ol type="1">
+<li>An invoice is issued under the applicable payment plan.</li>
+<li>The due date is recorded.</li>
+<li>The system tracks verified allocated payments.</li>
+<li>If a balance remains after the due date, the invoice is flagged as
+overdue.</li>
+<li>The Manager and Admin see the balance and aging category within
+their authorized scope.</li>
+<li>The organization follows its approved reminder and collection
+procedure.</li>
+<li>Payment, credit, dispute resolution, or an authorized adjustment
+updates the balance.</li>
+</ol>
+<p>The platform must not automatically impose interest, penalties, or
+collection fees without an approved rule and appropriate legal
+review.</p>
+</div></details>
+<details class="sec" id="s10"><summary><span class="secn">10</span><span class="sect">Staff compensation and outstanding payables</span></summary><div class="prose"><p>The platform must maintain separate compensation records for
+teachers, Managers, and eligible Admin employees.</p>
+<p>For each person, the system should report:</p>
+<ul>
+<li>Compensation earned</li>
+<li>Compensation pending verification or approval</li>
+<li>Amount approved for payment</li>
+<li>Amount paid and verified</li>
+<li>Remaining payable balance</li>
+<li>Contractual payment schedule</li>
+<li>Overdue payable amount, where applicable</li>
+<li>Related sessions, agreements, and adjustments</li>
+</ul>
+<h2 id="teacher-earnings">Teacher earnings</h2>
+<p>The teacher's earnings are governed by the applicable agreement. The
+financial engine must preserve the agreed rate and terms.</p>
+<p>The customer payment plan determines when the parent is expected to
+pay. It does not automatically change the teacher's compensation
+agreement.</p>
+<p><strong>Important unresolved matter:</strong> Whether the
+organization carries the collection risk when a parent never pays
+remains outside the current agreed scope and must be decided at the
+owner/legal meeting.</p>
+<p>Until that decision is made, the system must track customer
+receivables and staff payables independently. It must not assume that a
+teacher's earned compensation is automatically cancelled because a
+parent has not paid.</p>
+<h2 id="manager-earnings">Manager earnings</h2>
+<p>Manager compensation is calculated from the agreed percentage of the
+teacher's session rate, subject to the applicable qualifying-session
+rules and contract.</p>
+<p>The system must preserve the agreement version used in each
+calculation.</p>
+<p>The compensation must not be calculated as a percentage of the
+operational-fee pool unless a specific agreement explicitly selects that
+alternative basis.</p>
+<h2 id="admin-employee-compensation">Admin employee compensation</h2>
+<p>Eligible Admin employees may have their own compensation agreements.
+Administrative permissions must not determine how an employee is
+compensated.</p>
+<p>Owner distributions, dividends, and profit withdrawals remain
+distinct from employee compensation and are not included in the initial
+model unless separately approved.</p>
+</div></details>
+<details class="sec" id="s11"><summary><span class="secn">11</span><span class="sect">Cash flow and liquidity management</span></summary><div class="prose"><p>The Admin must be able to distinguish financial performance from
+actual liquidity.</p>
+<h2 id="core-measures">Core measures</h2>
+<div class="tbl"><table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Measure</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Billed</td>
+<td>Charges issued to customers</td>
+</tr>
+<tr class="even">
+<td>Earned</td>
+<td>Compensation or other amounts earned under applicable
+agreements</td>
+</tr>
+<tr class="odd">
+<td>Collected</td>
+<td>Customer money received and verified</td>
+</tr>
+<tr class="even">
+<td>Payable</td>
+<td>Compensation owed to staff</td>
+</tr>
+<tr class="odd">
+<td>Paid</td>
+<td>External payment made and recorded</td>
+</tr>
+<tr class="even">
+<td>Operational allocation</td>
+<td>Amount assigned to the organization's operating pool</td>
+</tr>
+<tr class="odd">
+<td>Recorded operating expenses</td>
+<td>Expenses entered and appropriately recognized</td>
+</tr>
+<tr class="even">
+<td>Available cash</td>
+<td>Actual cash available, based on reconciled cash records</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="example-one-session-parent-paid">Example: one session, parent
+paid</h2>
+<div class="tbl"><table>
+<thead>
+<tr class="header">
+<th>Item</th>
+<th style="text-align: right;">Amount</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Customer payment verified</td>
+<td style="text-align: right;">+SAR 105</td>
+</tr>
+<tr class="even">
+<td>Teacher compensation payable</td>
+<td style="text-align: right;">SAR 100</td>
+</tr>
+<tr class="odd">
+<td>Manager compensation payable</td>
+<td style="text-align: right;">SAR 2</td>
+</tr>
+<tr class="even">
+<td>Residual operating allocation</td>
+<td style="text-align: right;">SAR 3</td>
+</tr>
+</tbody>
+</table></div>
+<p>If the organization has received SAR 105 but has not paid the teacher
+or Manager, the bank balance may have increased by SAR 105. However, SAR
+102 represents modeled compensation obligations if both amounts have
+been earned and remain unpaid.</p>
+<p>The organization must not report the entire SAR 105 as unrestricted
+operating profit.</p>
+<h2 id="example-one-session-parent-unpaid">Example: one session, parent
+unpaid</h2>
+<div class="tbl"><table>
+<thead>
+<tr class="header">
+<th>Item</th>
+<th style="text-align: right;">Amount</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Customer receivable</td>
+<td style="text-align: right;">SAR 105</td>
+</tr>
+<tr class="even">
+<td>Verified customer cash received</td>
+<td style="text-align: right;">SAR 0</td>
+</tr>
+<tr class="odd">
+<td>Teacher compensation, if already earned</td>
+<td style="text-align: right;">SAR 100</td>
+</tr>
+<tr class="even">
+<td>Manager compensation, if already earned</td>
+<td style="text-align: right;">SAR 2</td>
+</tr>
+</tbody>
+</table></div>
+<p>The organization has an outstanding receivable but has not collected
+the money.</p>
+<p>The treatment of the teacher's and Manager's payables, including
+whether payment is due before customer collection, follows their
+contracts and the decision reserved for the review meeting.</p>
+<h2 id="cash-flow-forecasting">Cash-flow forecasting</h2>
+<p>The Admin dashboard should forecast:</p>
+<p><strong>Expected inflows</strong></p>
+<ul>
+<li>Customer payments due</li>
+<li>Estimated collections of overdue balances</li>
+<li>Other approved revenue</li>
+</ul>
+<p><strong>Expected outflows</strong></p>
+<ul>
+<li>Teacher compensation payments due</li>
+<li>Manager compensation payments due</li>
+<li>Admin employee compensation due</li>
+<li>Hosting and infrastructure</li>
+<li>Technical support and maintenance</li>
+<li>Administration and approved tools</li>
+<li>Expected refunds and other approved obligations</li>
+<li>SaaS subscription costs paid by the tutoring organization</li>
+</ul>
+<p>Forecasts must be clearly labeled as estimates. An unpaid invoice is
+not guaranteed cash.</p>
+<h2 id="operating-reserve">Operating reserve</h2>
+<p>The organization should establish a minimum cash reserve based on
+essential fixed expenses and near-term obligations.</p>
+<p>The target should be configurable and approved by the owners with
+accounting advice. The dashboard should compare the target with actual
+reconciled cash.</p>
+<p>A cash shortage warning must prompt planning and escalation; it must
+not silently cancel a contractual obligation or alter earned
+compensation.</p>
+</div></details>
+<details class="sec" id="s12"><summary><span class="secn">12</span><span class="sect">Operational allocation and break-even analysis</span></summary><div class="prose"><p>The Admin sets the operational-fee rate using the organization's
+forecast of fixed costs, variable costs, and expected income.</p>
+<p>For the illustrative rates:</p>
+<div class="tbl"><table>
+<thead>
+<tr class="header">
+<th>Item</th>
+<th style="text-align: right;">Amount</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Teacher session rate</td>
+<td style="text-align: right;">SAR 100</td>
+</tr>
+<tr class="even">
+<td>Operational fee at 5%</td>
+<td style="text-align: right;">SAR 5</td>
+</tr>
+<tr class="odd">
+<td>Manager commission at 2% of teacher rate</td>
+<td style="text-align: right;">SAR 2</td>
+</tr>
+<tr class="even">
+<td>Residual operating allocation</td>
+<td style="text-align: right;">SAR 3</td>
+</tr>
+</tbody>
+</table></div>
+<p>If the relevant operating expense target is SAR 3,000 per month, and
+each qualifying session generates SAR 3 of collected residual
+allocation, the simple break-even volume for that expense pool is:</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mfrac><mrow><mrow><mtext mathvariant="normal">SAR </mtext><mspace width="0.333em"></mspace></mrow><mn>3</mn><mo>,</mo><mn>000</mn></mrow><mrow><mrow><mtext mathvariant="normal">SAR </mtext><mspace width="0.333em"></mspace></mrow><mn>3</mn></mrow></mfrac><mo>=</mo><mn>1</mn><mo>,</mo><mn>000</mn><mrow><mspace width="0.333em"></mspace><mtext mathvariant="normal"> sessions</mtext></mrow></mrow><annotation encoding="application/x-tex">
+\frac{\text{SAR }3{,}000}{\text{SAR }3}
+=
+1{,}000\text{ sessions}
+</annotation></semantics></math></p>
+<p>This estimate assumes the relevant fee is fully collected and
+excludes other costs, refunds, taxes, and unmodeled revenue.</p>
+<p>The organization should evaluate:</p>
+<ul>
+<li>Expected session volume</li>
+<li>Teacher-rate distribution</li>
+<li>Operational-fee rate</li>
+<li>Manager compensation commitments</li>
+<li>Collection delays and defaults</li>
+<li>Fixed hosting and support costs</li>
+<li>Variable costs</li>
+<li>Refunds and adjustments</li>
+<li>Reserve requirements</li>
+</ul>
+<p>The Admin dashboard should display operational fees billed and
+collected, Manager compensation, residual operating allocation, actual
+recorded expenses, and any supported operating contribution measure
+separately.</p>
+</div></details>
+<details class="sec" id="s13"><summary><span class="secn">13</span><span class="sect">Dashboards and financial reporting</span></summary><div class="prose"><h2 id="admin">Admin</h2>
+<p>The Admin dashboard should show:</p>
+<ul>
+<li>Customer billing and verified collections</li>
+<li>Outstanding and overdue receivables</li>
+<li>Payment evidence awaiting verification</li>
+<li>Teacher and Manager compensation earned and payable</li>
+<li>Staff payments recorded and verified</li>
+<li>Operational fees billed and collected</li>
+<li>Manager compensation allocation</li>
+<li>Residual operating allocation</li>
+<li>Recorded operating expenses</li>
+<li>Actual reconciled cash and reserve status</li>
+<li>Forecast inflows and outflows</li>
+<li>Financial exceptions, adjustments, and audit history</li>
+</ul>
+<h2 id="manager">Manager</h2>
+<p>Within authorized scope:</p>
+<ul>
+<li>Teacher contract drafts and rate validation</li>
+<li>Relevant session records</li>
+<li>Customer billing status</li>
+<li>Overdue accounts and follow-up tasks</li>
+<li>Manager compensation statement</li>
+<li>Teacher compensation obligations</li>
+<li>Permitted payment records and financial exceptions</li>
+</ul>
+<h2 id="teacher">Teacher</h2>
+<p>The teacher sees:</p>
+<ul>
+<li>Agreed session rate</li>
+<li>Relevant verified sessions</li>
+<li>Compensation earned</li>
+<li>Amount paid and recorded</li>
+<li>Remaining payable balance</li>
+<li>Applicable payment schedule</li>
+<li>Adjustments and explanations</li>
+</ul>
+<h2 id="parent">Parent</h2>
+<p>The parent sees:</p>
+<ul>
+<li>Their own children's billing records</li>
+<li>Session charges and operational-fee breakdown where applicable</li>
+<li>Prepaid or postpaid arrangement</li>
+<li>Amount billed, paid, and outstanding</li>
+<li>Due dates and overdue status</li>
+<li>Verified payments</li>
+<li>Credits, refunds, and adjustments</li>
+</ul>
+<p>The platform must enforce these scopes on the backend, not merely
+through frontend visibility.</p>
+</div></details>
+<details class="sec" id="s14"><summary><span class="secn">14</span><span class="sect">Refunds, cancellations, and exceptional cases</span></summary><div class="prose"><p>The organization must configure the financial treatment of supported
+session events.</p>
+<p>Examples include:</p>
+<ul>
+<li>Student absence</li>
+<li>Teacher absence</li>
+<li>Late cancellation</li>
+<li>Session dispute</li>
+<li>Partial attendance</li>
+<li>Refund</li>
+<li>Incorrect payment record</li>
+<li>Contract termination</li>
+<li>Discount or special pricing arrangement</li>
+</ul>
+<p>The system must preserve the original financial record and record
+corrections through traceable adjustments or refund records.</p>
+<p>Discounts must identify which component they affect. They must not
+automatically reduce the teacher's contractual compensation without an
+applicable agreement and approved policy.</p>
+<p>The handling of unused prepaid balances, refunds, disputed payments,
+and customer nonpayment remains subject to the decisions and legal
+review required for the final policy.</p>
+</div></details>
+<details class="sec" id="s15"><summary><span class="secn">15</span><span class="sect">SaaS subscription billing</span></summary><div class="prose"><p>SaaS subscription billing is a separate relationship between the
+tutoring organization and the platform operator.</p>
+<p>It has its own commercial agreement, pricing plan, billing period,
+invoices, payments, and outstanding balances.</p>
+<p>The platform operator's subscription revenue must not be confused
+with the tutoring organization's operational allocation. Nor should the
+subscription automatically be deducted from a parent's tutoring
+payment.</p>
+<p>The initial release does not include SaaS subscription checkout or
+automatic collection.</p>
+<p>The project owners must approve the SaaS pricing model and the
+tenant-isolation architecture before the platform is offered to multiple
+independent tutoring organizations.</p>
+</div></details>
+<details class="sec" id="s16"><summary><span class="secn">16</span><span class="sect">Financial records and technical implementation</span></summary><div class="prose"><p>The following conceptual records should be considered during
+technical design:</p>
+<div class="tbl"><table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Record</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>TeacherContract</td>
+<td>Agreed teacher rate and contractual terms</td>
+</tr>
+<tr class="even">
+<td>ManagerCompensationAgreement</td>
+<td>Manager's percentage basis, rate, and effective dates</td>
+</tr>
+<tr class="odd">
+<td>StaffCompensationAgreement</td>
+<td>Agreements for eligible staff groups</td>
+</tr>
+<tr class="even">
+<td>PricingArrangement</td>
+<td>Customer pricing model and scope</td>
+</tr>
+<tr class="odd">
+<td>OperationalFeePolicy</td>
+<td>Admin-configured operational-fee percentage</td>
+</tr>
+<tr class="even">
+<td>BillingPolicy</td>
+<td>Treatment of supported session events</td>
+</tr>
+<tr class="odd">
+<td>CustomerInvoice</td>
+<td>Amount billed to the parent</td>
+</tr>
+<tr class="even">
+<td>CustomerInvoiceLine</td>
+<td>Session charge, operational fee, and adjustments</td>
+</tr>
+<tr class="odd">
+<td>SessionFinancialRecord</td>
+<td>Link between a verified session and financial calculations</td>
+</tr>
+<tr class="even">
+<td>CompensationEarning</td>
+<td>Amount earned under a staff agreement</td>
+</tr>
+<tr class="odd">
+<td>CompensationStatement</td>
+<td>Staff earnings and payable summary for a period</td>
+</tr>
+<tr class="even">
+<td>CustomerPayment</td>
+<td>Externally received customer payment record</td>
+</tr>
+<tr class="odd">
+<td>StaffPayment</td>
+<td>Externally made staff payment record</td>
+</tr>
+<tr class="even">
+<td>PaymentEvidence</td>
+<td>Uploaded receipt or supporting evidence and verification
+history</td>
+</tr>
+<tr class="odd">
+<td>PaymentAllocation</td>
+<td>Allocation of a payment to an invoice or compensation
+obligation</td>
+</tr>
+<tr class="even">
+<td>RefundRecord</td>
+<td>Refund linked to the original payment</td>
+</tr>
+<tr class="odd">
+<td>FinancialAdjustment</td>
+<td>Traceable correction to a recorded amount</td>
+</tr>
+<tr class="even">
+<td>FinancialPeriod</td>
+<td>Review and finalization control</td>
+</tr>
+<tr class="odd">
+<td>OperatingExpense</td>
+<td>Organizational expense record</td>
+</tr>
+<tr class="even">
+<td>AuditEvent</td>
+<td>History of consequential financial actions</td>
+</tr>
+<tr class="odd">
+<td>OrganizationSubscription</td>
+<td>Separate SaaS subscription record, when implemented</td>
+</tr>
+</tbody>
+</table></div>
+<p>This is a conceptual model, not a finalized database schema. The
+actual design must follow the repository's established conventions and
+the approved tenancy and authorization architecture.</p>
+</div></details>
+<details class="sec" id="s17"><summary><span class="secn">17</span><span class="sect">Decisions reserved for the owner and legal review</span></summary><div class="prose"><p>The following matters remain open and must not be silently decided by
+the technical team.</p>
+<div class="tbl"><table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Topic</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Who carries the collection risk when a parent never pays?</td>
+<td><strong>Unresolved — owner/legal decision</strong></td>
+</tr>
+<tr class="even">
+<td>Whether staff compensation is payable before customer
+collection</td>
+<td><strong>Unresolved — contract and legal decision</strong></td>
+</tr>
+<tr class="odd">
+<td>Exact legal relationship between organization, teachers, Managers,
+and parents</td>
+<td>Pending legal review</td>
+</tr>
+<tr class="even">
+<td>Required invoice and receipt disclosures</td>
+<td>Pending legal/accounting review</td>
+</tr>
+<tr class="odd">
+<td>Tax treatment and applicable invoicing requirements</td>
+<td>Pending professional review</td>
+</tr>
+<tr class="even">
+<td>Prepaid unused balance, refunds, and cancellation rules</td>
+<td>Pending policy approval</td>
+</tr>
+<tr class="odd">
+<td>Postpaid eligibility and approval authority</td>
+<td>Pending owner approval</td>
+</tr>
+<tr class="even">
+<td>Overdue escalation and collection procedures</td>
+<td>Pending policy approval</td>
+</tr>
+<tr class="odd">
+<td>Approval of rate exceptions</td>
+<td>To be formally defined</td>
+</tr>
+<tr class="even">
+<td>Whether sensitive payments require a second reviewer</td>
+<td>Pending governance decision</td>
+</tr>
+<tr class="odd">
+<td>Minimum cash reserve target</td>
+<td>Pending owner/accounting decision</td>
+</tr>
+<tr class="even">
+<td>Need for formal double-entry accounting or an accounting
+integration</td>
+<td>Pending accounting decision</td>
+</tr>
+<tr class="odd">
+<td>SaaS subscription pricing and contracting structure</td>
+<td>Pending owner decision</td>
+</tr>
+<tr class="even">
+<td>Multi-tenant isolation and deployment model</td>
+<td>Must be resolved before multi-organization SaaS use</td>
+</tr>
+</tbody>
+</table></div>
+<p>The platform can be designed to accommodate these choices, but the
+unresolved policies must be approved before the related workflows are
+activated for production.</p>
+</div></details>
+<details class="sec" id="s18"><summary><span class="secn">18</span><span class="sect">Recommended implementation sequence</span></summary><div class="prose"><ol type="1">
+<li>Confirm financial definitions and the distinction between prepaid
+and postpaid arrangements.</li>
+<li>Finalize the teacher and Manager contract fields with legal
+input.</li>
+<li>Define the Admin's rate boundaries and operational-fee
+configuration.</li>
+<li>Define session verification and financial calculation triggers.</li>
+<li>Implement customer billing for both pricing models.</li>
+<li>Implement prepaid balance tracking and postpaid invoice
+tracking.</li>
+<li>Implement teacher and Manager compensation calculations.</li>
+<li>Implement uploaded payment evidence, amount entry, and Admin
+verification.</li>
+<li>Implement payment allocation, receivables, payables, and overdue
+reporting.</li>
+<li>Implement financial periods, adjustments, audit history, and
+reconciliation.</li>
+<li>Implement operational expenses, cash-flow reporting, and reserve
+monitoring.</li>
+<li>Resolve tenant isolation and document the separate SaaS subscription
+boundary.</li>
+<li>Run end-to-end tests against the approved contracts and
+policies.</li>
+</ol>
+</div></details>
+<details class="sec" id="s19"><summary><span class="secn">19</span><span class="sect">Proposed operating model</span></summary><div class="prose"><p>The agreed direction is that the organization controls the financial
+rules, the Manager drafts teacher contracts within approved limits, the
+teacher earns compensation according to the applicable agreement, and
+the parent pays under an approved prepaid or postpaid plan.</p>
+<p>The Admin configures the operational-fee percentage based on the
+organization's financial forecast. The Manager's compensation percentage
+is calculated against the teacher's agreed session rate, according to
+the Manager's agreement.</p>
+<p>When a qualifying session is verified, the platform generates
+separate customer billing and staff compensation records. Customer
+payments and staff payments are made externally, recorded with
+supporting evidence, and verified by the Admin before being reflected as
+verified transactions.</p>
+<p>The platform separately tracks customer receivables, staff payables,
+operational allocations, actual recorded expenses, and available cash.
+Overdue amounts are visible and traceable. Finalized records are
+corrected through auditable adjustments.</p>
+<p>SaaS subscription billing remains a separate commercial and financial
+domain.</p>
+<h2 id="conclusion">Conclusion</h2>
+<p>This model provides a structured financial operating framework
+without assuming that every outstanding invoice is cash, that every
+earned amount has been paid, or that the operational fee represents
+profit.</p>
+<p>It is ready for discussion with the project owners, legal counsel,
+and accounting adviser. The final contracts, collection-risk allocation,
+payment obligations, tax treatment, and financial policies must be
+approved before they are treated as binding business rules.</p>
+</div></details>
+</section>
+
+<div class="foot">
+  <p>The meeting is for your questions and for the open decisions in Part 7. Note anything you want to raise as you read.</p>
+  <p>Charts are drawn from the document's illustrative rates (SAR 80 to 150 permitted teacher rate, 5% operational fee, 2% Manager commission, SAR 3,000 monthly expense target). Nothing here is an approved commercial term.</p>
+  <p>The default-risk chart and the four cash-flow situations include assumptions added for discussion. The proposal itself leaves collection risk, and whether staff are paid before customers, undecided.</p>
+</div>
+</div>
+<div id="tip" role="tooltip"></div>
+
+<script>
+(function(){
+var NS='http://www.w3.org/2000/svg';
+var S={T:100,fee:5,mgr:2,n:1000,exp:3000,def:2};
+var D0=JSON.parse(JSON.stringify(S));
+var RATE_MIN=80,RATE_MAX=150;
+function $(s){return document.querySelector(s)}
+function fmt(x,d){d=d||0;return x.toLocaleString('en-US',{minimumFractionDigits:d,maximumFractionDigits:d})}
+function sar(x,d){d=d||0;return (x<0?'−':'')+'SAR '+fmt(Math.abs(x),d)}
+function pct(x,d){return fmt(x,d==null?1:d)+'%'}
+function dec(x){return Math.abs(x-Math.round(x))<1e-9?fmt(x,0):fmt(x,1)}
+function resFor(m,s){s=s||S;return s.T*(s.fee-m)/100}
+function calc(s){s=s||S;var O=s.T*s.fee/100,M=s.T*s.mgr/100,P=s.T+O,res=O-M;return{O:O,M:M,P:P,res:res,be:res>0?s.exp/res:null,dstar:res>0?res/P:0}}
+function el(tag,attrs,parent){var e=document.createElementNS(NS,tag);for(var k in attrs){e.setAttribute(k,attrs[k])}if(parent)parent.appendChild(e);return e}
+function txt(parent,x,y,s,cls,anchor){var t=el('text',{x:x,y:y},parent);if(cls)t.setAttribute('class',cls);if(anchor)t.setAttribute('text-anchor',anchor);t.textContent=s;return t}
+function niceStep(r,n){var raw=r/n;var p=Math.pow(10,Math.floor(Math.log10(raw)));var f=raw/p;return (f<=1?1:f<=2?2:f<=5?5:10)*p}
+function scaleY(mn,mx){var rng=(mx-mn)||1;var pad=rng*0.14;var hi0=mx>0?mx+pad:mx,lo0=mn<0?mn-pad:mn;var step=niceStep((hi0-lo0)||1,4);var lo=Math.floor(lo0/step+1e-9)*step,hi=Math.ceil(hi0/step-1e-9)*step;if(hi<=lo)hi=lo+step;return{lo:lo,hi:hi,step:step}}
+function table(host,heads,rows){var h='<table><thead><tr>';heads.forEach(function(x,i){h+='<th'+(i>0?' class="r"':'')+'>'+x+'</th>'});h+='</tr></thead><tbody>';rows.forEach(function(r){h+='<tr>';r.forEach(function(c,i){h+='<td'+(i>0?' class="r"':'')+'>'+c+'</td>'});h+='</tr>'});h+='</tbody></table>';host.innerHTML=h}
+
+/* tooltip */
+var tip=$('#tip');
+document.addEventListener('pointermove',function(e){var t=e.target.closest&&e.target.closest('[data-tip]');if(!t){tip.classList.remove('on');return}tip.textContent=t.getAttribute('data-tip');tip.classList.add('on');var x=e.clientX+14,y=e.clientY+14;var w=tip.offsetWidth,h=tip.offsetHeight;if(x+w>innerWidth-8)x=e.clientX-w-14;if(y+h>innerHeight-8)y=e.clientY-h-14;tip.style.left=Math.max(8,x)+'px';tip.style.top=Math.max(8,y)+'px'});
+document.addEventListener('pointerdown',function(e){var t=e.target.closest&&e.target.closest('[data-tip]');if(!t)tip.classList.remove('on')});
+document.addEventListener('scroll',function(){tip.classList.remove('on')},true);
+
+/* bar chart */
+function barChart(host,o){
+  host.textContent='';
+  var W=560,H=o.h||260,m={l:54,r:12,t:22,b:o.xTitle?54:36};
+  var svg=el('svg',{viewBox:'0 0 '+W+' '+H,role:'img','aria-label':o.aria},host);
+  var vals=o.vals.map(function(v){return v==null?0:v});
+  var sc=scaleY(Math.min(0,Math.min.apply(null,vals)),Math.max(0,Math.max.apply(null,vals)));
+  function y(v){return m.t+(sc.hi-v)/(sc.hi-sc.lo)*(H-m.t-m.b)}
+  for(var v=sc.lo;v<=sc.hi+1e-9;v+=sc.step){el('line',{x1:m.l,x2:W-m.r,y1:y(v),y2:y(v),'class':v===0?'zl':'gl'},svg);txt(svg,m.l-8,y(v)+4,o.tick(v),'ax','end')}
+  if(o.yTitle)txt(svg,0,10,o.yTitle,'ax','start');
+  var n=o.cats.length,band=(W-m.l-m.r)/n,bw=Math.min(60,band*.62);
+  o.cats.forEach(function(c,i){
+    var cx=m.l+band*i+band/2,x=cx-bw/2,v=o.vals[i];
+    var g=el('g',{},svg);
+    if(v==null){
+      txt(g,cx,y(0)-8,'none','ax','middle');
+    }else{
+      var top=y(Math.max(v,0)),h=Math.max(1.5,Math.abs(y(v)-y(0)));
+      var r=el('rect',{x:x,y:v>=0?top:y(0),width:bw,height:h,rx:3},g);
+      r.style.fill=o.color(i,v);
+      if(o.hi===i){r.style.stroke='var(--ink)';r.style.strokeWidth='2'}
+      else if(o.hi!=null){r.style.opacity='.6'}
+      txt(g,cx,v>=0?top-6:y(v)+14,o.label(v),'vl','middle');
+    }
+    txt(svg,cx,H-m.b+17,o.cat(c),o.hi===i?'vl':'ax','middle');
+    var hit=el('rect',{x:m.l+band*i,y:m.t-8,width:band,height:H-m.t-m.b+16,fill:'transparent'},svg);
+    hit.setAttribute('data-tip',o.tip(i));
+  });
+  if(o.xTitle)txt(svg,m.l+(W-m.l-m.r)/2,H-8,o.xTitle,'ax','middle');
+}
+
+/* line chart: net result vs default rate */
+function lineChart(host,o){
+  host.textContent='';
+  var W=560,H=280,m={l:58,r:14,t:22,b:50};
+  var svg=el('svg',{viewBox:'0 0 '+W+' '+H,role:'img','aria-label':o.aria},host);
+  var all=o.pts.map(function(p){return p.y}).concat([o.exp,0]);
+  var sc=scaleY(Math.min.apply(null,all),Math.max.apply(null,all));
+  var xmax=o.pts[o.pts.length-1].x;
+  function X(v){return m.l+v/xmax*(W-m.l-m.r)}
+  function Y(v){return m.t+(sc.hi-v)/(sc.hi-sc.lo)*(H-m.t-m.b)}
+  if(sc.lo<0){var loss=el('rect',{x:m.l,y:Y(0),width:W-m.l-m.r,height:Y(sc.lo)-Y(0)},svg);loss.style.fill='var(--crit)';loss.style.opacity='.08';txt(svg,W-m.r-4,Y(sc.lo)-6,'Operating loss','ax','end')}
+  for(var v=sc.lo;v<=sc.hi+1e-9;v+=sc.step){el('line',{x1:m.l,x2:W-m.r,y1:Y(v),y2:Y(v),'class':v===0?'zl':'gl'},svg);txt(svg,m.l-8,Y(v)+4,o.tick(v),'ax','end')}
+  o.pts.forEach(function(p){txt(svg,X(p.x),H-m.b+17,p.x+'%','ax','middle')});
+  txt(svg,m.l+(W-m.l-m.r)/2,H-8,'Share of sessions never paid by the parent','ax','middle');
+  txt(svg,0,10,'SAR per month','ax','start');
+  var ex=el('line',{x1:m.l,x2:W-m.r,y1:Y(o.exp),y2:Y(o.exp),'stroke-dasharray':'5 4'},svg);ex.style.stroke='var(--ink2)';ex.style.strokeWidth='1.5';
+  txt(svg,m.l+4,Y(o.exp)-5,'Monthly expenses '+fmt(o.exp),'ax','start');
+  if(o.dstar>0&&o.dstar*100<=xmax){var dx=X(o.dstar*100);var dl=el('line',{x1:dx,x2:dx,y1:m.t,y2:Y(sc.lo)},svg);dl.style.stroke='var(--crit)';dl.style.strokeWidth='1.5';dl.setAttribute('stroke-dasharray','3 3');txt(svg,dx+(dx>W-150?-5:5),m.t+10,'Allocation fully lost at '+pct(o.dstar*100,1),'vl',dx>W-150?'end':'start').style.fill='var(--crittext)'}
+  var d='';o.pts.forEach(function(p,i){d+=(i?'L':'M')+X(p.x).toFixed(1)+' '+Y(p.y).toFixed(1)});
+  var ln=el('path',{d:d,fill:'none'},svg);ln.style.stroke='var(--c1)';ln.style.strokeWidth='2.5';
+  o.pts.forEach(function(p){var c=el('circle',{cx:X(p.x),cy:Y(p.y),r:p.cur?6:4},svg);c.style.fill='var(--c1)';c.style.stroke='var(--surface)';c.style.strokeWidth='2';
+    var hit=el('circle',{cx:X(p.x),cy:Y(p.y),r:14,fill:'transparent'},svg);hit.setAttribute('data-tip',p.tip)});
+  var cur=o.pts.filter(function(p){return p.cur})[0];
+  if(cur){txt(svg,X(cur.x),Y(cur.y)-12,sar(cur.y),'vl','middle')}
+}
+
+/* waterfall */
+function waterfall(host,steps,aria){
+  host.textContent='';
+  var W=560,H=280,m={l:54,r:12,t:26,b:46};
+  var svg=el('svg',{viewBox:'0 0 '+W+' '+H,role:'img','aria-label':aria},host);
+  var cum=0,levels=[0],bars=[];
+  steps.forEach(function(s){var from,to;if(s.total){from=0;to=cum}else{from=cum;to=cum+s.delta;cum=to}bars.push({s:s,from:from,to:to});levels.push(from,to)});
+  var sc=scaleY(Math.min.apply(null,levels.concat([0])),Math.max.apply(null,levels.concat([0])));
+  function y(v){return m.t+(sc.hi-v)/(sc.hi-sc.lo)*(H-m.t-m.b)}
+  for(var v=sc.lo;v<=sc.hi+1e-9;v+=sc.step){el('line',{x1:m.l,x2:W-m.r,y1:y(v),y2:y(v),'class':v===0?'zl':'gl'},svg);txt(svg,m.l-8,y(v)+4,fmt(v),'ax','end')}
+  txt(svg,0,10,'SAR','ax','start');
+  var n=bars.length,band=(W-m.l-m.r)/n,bw=Math.min(72,band*.6),prevEnd=null;
+  bars.forEach(function(b,i){
+    var cx=m.l+band*i+band/2,x=cx-bw/2,lo=Math.min(b.from,b.to),hi=Math.max(b.from,b.to);
+    var h=Math.max(2,y(lo)-y(hi));
+    var col=b.s.color;
+    if(b.s.total){col=b.to>0?'var(--good)':b.to<0?'var(--crit)':'var(--axis)'}
+    if(prevEnd!=null){var cl=el('line',{x1:cx-band+bw/2,x2:x,y1:y(prevEnd),y2:y(prevEnd)},svg);cl.style.stroke='var(--axis)';cl.setAttribute('stroke-dasharray','2 3')}
+    var r=el('rect',{x:x,y:y(hi),width:bw,height:h,rx:3},svg);
+    if(b.s.owed){r.style.fill=col;r.style.fillOpacity='.22';r.style.stroke=col;r.style.strokeWidth='2';r.setAttribute('stroke-dasharray','5 3')}else{r.style.fill=col}
+    var val=b.s.total?b.to:b.s.delta;
+    var lab=(b.s.total?'':(val>0?'+':''))+(val<0?'−':'')+fmt(Math.abs(val),val%1?1:0);
+    var above=b.s.total?b.to>=0:b.s.delta>=0;
+    txt(svg,cx,above?y(hi)-6:y(lo)+14,lab,'vl','middle');
+    var words=b.s.label.split(' / ');
+    words.forEach(function(wd,k){txt(svg,cx,H-m.b+16+k*13,wd,'ax','middle')});
+    var hit=el('rect',{x:m.l+band*i,y:m.t-6,width:band,height:H-m.t-m.b+12,fill:'transparent'},svg);hit.setAttribute('data-tip',b.s.tip);
+    prevEnd=b.to;
+  });
+}
+
+/* controls */
+var CT=[
+ {k:'T',l:'Teacher session rate',min:80,max:150,step:5,f:function(v){return 'SAR '+v},h:'The example allows SAR 80 to 150'},
+ {k:'fee',l:'Operational fee (added to the bill)',min:0,max:10,step:0.5,f:function(v){return pct(v)},h:'Added to the parent bill, as a percent of the teacher rate'},
+ {k:'mgr',l:'Manager commission',min:0,max:10,step:0.5,f:function(v){return pct(v)},h:'Percent of the teacher rate'},
+ {k:'n',adv:1,l:'Sessions per month',min:200,max:3000,step:100,f:function(v){return fmt(v)},h:'Planned volume'},
+ {k:'exp',adv:1,l:'Monthly costs',min:500,max:10000,step:500,f:function(v){return 'SAR '+fmt(v)},h:'Hosting, support, administration'},
+ {k:'def',adv:1,l:'Sessions never paid by parents',min:0,max:10,step:0.5,f:function(v){return pct(v)},h:'Used in the unpaid-sessions chart'}
+];
+var cbox=$('#controls');var more=document.createElement('details');more.className='more';more.innerHTML='<summary>More settings</summary><div class="morebody"></div><p class="hint" id="more-out" style="margin-top:10px"></p>';var mb=more.querySelector('.morebody');
+CT.forEach(function(c){
+  var lab=document.createElement('label');
+  lab.innerHTML='<span class="row"><span>'+c.l+'</span><output id="o_'+c.k+'"></output></span><input type="range" id="i_'+c.k+'" min="'+c.min+'" max="'+c.max+'" step="'+c.step+'" value="'+S[c.k]+'"><span class="hint">'+c.h+'</span>';
+  (c.adv?mb:cbox).appendChild(lab);
+  lab.querySelector('input').addEventListener('input',function(e){S[c.k]=parseFloat(e.target.value);render()});
+});
+var rb=document.createElement('button');rb.type='button';rb.className='btn';rb.textContent='Reset to proposal example';rb.style.justifySelf='start';
+rb.addEventListener('click',function(){CT.forEach(function(c){S[c.k]=D0[c.k];$('#i_'+c.k).value=D0[c.k]});render()});
+cbox.appendChild(more);cbox.appendChild(rb);
+
+/* scenarios */
+var SCN=[
+ {id:'A',name:'Everyone is paid'},
+ {id:'B',name:'Parent never pays, staff still paid'},
+ {id:'C',name:'Parent never pays, staff not paid'},
+ {id:'D',name:'Parent paid, staff not yet paid'}
+];
+var scn='A';
+var tabs=$('#tabs');
+SCN.forEach(function(s){var b=document.createElement('button');b.type='button';b.className='btn';b.textContent=s.name;b.setAttribute('aria-pressed',s.id===scn);b.addEventListener('click',function(){scn=s.id;Array.prototype.forEach.call(tabs.children,function(x,i){x.setAttribute('aria-pressed',SCN[i].id===scn)});renderWF()});tabs.appendChild(b)});
+
+function renderWF(){
+  var c=calc(),T=S.T,M=c.M,P=c.P,res=c.res,steps,head,cap,rows;
+  var gT='var(--c1)',gM='var(--c2)',gP='var(--ink2)';
+  if(scn==='A'){
+    head='SAR '+dec(res)+' is left for operations when everyone is paid';
+    steps=[{label:'Parent / pays',delta:P,color:gP,tip:'Verified customer payment: '+sar(P,1)},{label:'Teacher / paid',delta:-T,color:gT,tip:'Teacher compensation paid: '+sar(T,1)},{label:'Manager / paid',delta:-M,color:gM,tip:'Manager compensation paid: '+sar(M,1)},{label:'Left for / operations',total:true,tip:'Residual operating allocation: '+sar(res,1)}];
+    cap='The parent pays '+sar(P,1)+' and the organization pays the teacher and Manager. '+sar(res,1)+' remains as operating allocation. It is not profit until recorded expenses are covered.';
+  }else if(scn==='B'){
+    head='Each unpaid session costs '+sar(T+M)+' in cash if the organization still pays staff';
+    steps=[{label:'Parent / never pays',delta:0,color:gP,tip:'No customer cash received'},{label:'Teacher / paid',delta:-T,color:gT,tip:'Teacher compensation paid: '+sar(T,1)},{label:'Manager / paid',delta:-M,color:gM,tip:'Manager compensation paid: '+sar(M,1)},{label:'Cash / result',total:true,tip:'Net cash result: '+sar(-(T+M),1)}];
+    cap='The parent never pays but the teacher and Manager are paid anyway, so the organization loses '+sar(T+M,1)+' of cash on this session. This is the exposure the owner and legal review has to allocate. The proposal does not assume either way.';
+  }else if(scn==='C'){
+    head='If staff are paid only after collection, the organization is not exposed';
+    steps=[{label:'Parent / never pays',delta:0,color:gP,tip:'No customer cash received'},{label:'Teacher / not paid',delta:0,color:gT,tip:'Teacher compensation not paid until the parent pays'},{label:'Manager / not paid',delta:0,color:gM,tip:'Manager compensation not paid until the parent pays'},{label:'Cash / result',total:true,tip:'Net cash result: SAR 0'}];
+    cap='Cash is unchanged, but the teacher and Manager carry the risk, so the contracts and the law have to allow it. The proposal says the system must not assume earned compensation is cancelled when a parent has not paid.';
+  }else{
+    head='Only SAR '+dec(res)+' of the SAR '+dec(P)+' received is free to spend';
+    steps=[{label:'Cash / received',delta:P,color:gP,tip:'Verified customer payment received: '+sar(P,1)},{label:'Owed to / teacher',delta:-T,color:gT,owed:true,tip:'Earned but unpaid teacher compensation: '+sar(T,1)},{label:'Owed to / Manager',delta:-M,color:gM,owed:true,tip:'Earned but unpaid Manager compensation: '+sar(M,1)},{label:'Free for / operations',total:true,tip:'Cash not already owed to staff: '+sar(res,1)}];
+    cap='The bank balance rose by '+sar(P,1)+', but '+sar(T+M,1)+' of it is already owed to staff. Reporting the whole amount as profit would overstate what the organization can spend.';
+  }
+  $('#hwf').textContent=head;$('#capwf').textContent=cap;
+  waterfall($('#cwf'),steps,head);
+  var cum=0,out=[];steps.forEach(function(s){if(s.total){out.push([s.label.replace(' / ',' '),sar(cum,1)])}else{cum+=s.delta;out.push([s.label.replace(' / ',' '),(s.delta>0?'+':'')+sar(s.delta,1).replace('SAR','SAR')+(s.owed?' (owed)':'')])}});
+  table($('#twf'),['Step','Amount'],out);
+}
+
+/* lifecycle */
+var STG=[
+ {t:'Contract approval',w:'Platform',h:'Rules and rates are approved and active before any session counts',b:['Teacher agreement, customer pricing arrangement, operational-fee setting and compensation agreements are approved','The proposed teacher rate is checked against the Admin’s minimum and maximum; exceptions are controlled and audited','New limits do not silently change existing contracts']},
+ {t:'Session outcome',w:'Platform',h:'The session is conducted, cancelled or otherwise resolved',b:['Uses the existing session workflow','A scheduled session is not yet a financial event']},
+ {t:'Verification',w:'Platform',h:'An authorized workflow confirms the outcome and the evidence',b:['The financial lifecycle starts here, from a verified qualifying event']},
+ {t:'Financial calculation',w:'Platform',h:'Separate, linked records are created from one verified session',b:['Customer charge or credit','Teacher compensation earning, when earned under the agreement','Manager compensation earning, when earned under the agreement','Operational allocation','Calculation snapshots and source references, so past figures keep the terms that applied']},
+ {t:'Customer billing',w:'Platform',h:'How the charge reaches the parent depends on the payment plan',b:['Postpaid: the charge enters the billing workflow and is invoiced on the approved schedule','Prepaid: the system applies the prepaid-balance rules and records which advance payment the session consumed','A prepaid session is authorized only against a verified, correctly allocated payment, not a receipt upload']},
+ {t:'Payment recording and verification',w:'Money moves outside the platform',ext:1,h:'The parent pays externally; the Admin confirms it actually arrived',b:['An authorized user uploads the receipt and enters the amount','The Admin checks the money was received and the amount is correct','Only then is the payment allocated and the outstanding balance reduced','The receipt is evidence, not proof of receipt on its own']},
+ {t:'Staff payment recording',w:'Money moves outside the platform',ext:1,h:'Teacher and Manager payments are made externally and recorded',b:['Recorded against the relevant payable records with evidence','The Admin verifies the payment was made','Balances update without rewriting the original earnings','Whether sensitive payments need a second reviewer is a governance decision']}
+];
+var stepsEl=$('#steps'),detail=$('#detail'),selStep=-1;
+STG.forEach(function(s,i){var b=document.createElement('button');b.type='button';b.className='step';b.setAttribute('aria-expanded','false');b.innerHTML='<span class="n">Stage '+(i+1)+'</span><span class="t">'+s.t+'</span><span class="w'+(s.ext?' ext':'')+'">'+s.w+'</span>';b.addEventListener('click',function(){showStep(i)});stepsEl.appendChild(b)});
+function showStep(i){selStep=i;Array.prototype.forEach.call(stepsEl.children,function(x,k){x.setAttribute('aria-expanded',k===i)});var s=STG[i];detail.innerHTML='<h4>Stage '+(i+1)+': '+s.t+'</h4><p>'+s.h+'.</p><ul>'+s.b.map(function(x){return '<li>'+x+'</li>'}).join('')+'</ul>'}
+showStep(3);
+
+/* meeting points */
+var PTS=[
+ {h:'Decide who carries the risk of a parent who never pays',p:'Decide first',hi:1,
+  b:['At the example rates each session leaves SAR 3 for operations, but an unpaid session costs SAR 102 in cash if staff are still paid. Roughly 3 unpaid sessions in 100 erase the whole allocation.','The proposal parks this for the owner and legal meeting. The charts show why it should be settled before billing goes live: it is the largest swing in the model.'],
+  ask:'If a parent never pays, does the organization still pay the teacher and Manager, or do they carry some or all of the loss?'},
+ {h:'Settle when staff become payable, together with point 1',p:'Decide first',hi:1,
+  b:['Whether compensation is payable before the customer pays is a separate open item, but it is the same question seen from the staff side. Answering one without the other leaves a gap.','Until it is decided the system keeps receivables and payables apart and does not cancel earned compensation.'],
+  ask:'Are teachers and the Manager paid on a fixed schedule, or only once the parent’s payment is verified?'},
+ {h:'The fee and Manager percentages are tied together',p:'Configuration',
+  b:['Both are percentages of the teacher rate, so the residual is the teacher rate × (fee % − Manager %). With a 5% fee, every extra point of Manager commission removes SAR 1 per SAR-100 session. At 5% the residual is zero.','The proposal already says the system must not silently produce a negative residual. The charts show how thin the room is.'],
+  ask:'Should the system reject any configuration where the Manager percentage is at or above the fee, or require a minimum residual margin?'},
+ {h:'Fixed-price arrangements need the same check',p:'Configuration',
+  b:['For Model B the proposal defines the parent price but not a residual rule. With a fixed price, the organization keeps whatever is left after the teacher and Manager are paid, which could be small or negative.'],
+  ask:'What is the validation for a fixed price: a minimum residual, or an authorized exception?'},
+ {h:'The permitted rate range changes the economics',p:'Planning',
+  b:['Because the fee is a percentage of the teacher rate, the allocation per session is SAR 2.40 at a SAR 80 teacher rate and SAR 4.50 at SAR 150 (5% fee, 2% Manager). Break-even sits between about 667 and 1,250 sessions a month, not at one number.','The 1,000-session figure depends on every teacher being at SAR 100.'],
+  ask:'Which rate mix should the forecast assume, and does the organization want the fee to scale with the teacher rate at all?'},
+ {h:'Say what the break-even leaves out',p:'Presentation',
+  b:['It assumes the fee is fully collected. It excludes refunds, taxes, other costs and any other revenue, as the proposal notes. Tax treatment is also pending professional review and could change what the parent pays and what the organization keeps.'],
+  ask:'Which of these should be added before the forecast is shown to owners as a target?'},
+ {h:'Prepaid may be the main way to limit exposure',p:'For discussion',
+  b:['A verified prepaid balance is paid before the service, so unpaid-session exposure on those sessions is close to zero. Postpaid is where the default risk in the charts sits. This is a reading of the model, not a proposal in the document.','The proposal leaves postpaid eligibility and approval authority open.'],
+  ask:'Should new or unverified parents be prepaid-only until they have a payment history?'},
+ {h:'Size the cash reserve against the exposure, not only fixed costs',p:'For discussion',
+  b:['The proposal bases the minimum reserve on essential fixed expenses and near-term obligations. If staff are paid regardless of collection, unpaid sessions are a further near-term obligation: at 1,000 sessions a month and 3% unpaid, about SAR 3,060 of staff pay goes out with nothing coming in.'],
+  ask:'Should the reserve target include a buffer for staff payments made against unpaid invoices?'}
+];
+var ptsEl=$('#pts');
+PTS.forEach(function(p,i){var d=document.createElement('details');d.className='pt';if(i===0)d.open=true;d.innerHTML='<summary><span class="ph">'+(i+1)+'. '+p.h+'</span><span class="pri'+(p.hi?' hi':'')+'">'+p.p+'</span></summary><div class="pb">'+p.b.map(function(x){return '<p>'+x+'</p>'}).join('')+'<div class="ask"><b>Question to consider:</b> '+p.ask+'</div></div>';ptsEl.appendChild(d)});
+
+/* decisions */
+var DG=[
+ {g:'Money at risk',i:[['Who carries the collection risk when a parent never pays?','Unresolved, owner/legal'],['Whether staff compensation is payable before customer collection','Unresolved, contract/legal'],['Prepaid unused balance, refunds and cancellation rules','Pending policy approval'],['Overdue escalation and collection procedures','Pending policy approval'],['Postpaid eligibility and approval authority','Pending owner approval']]},
+ {g:'Legal, tax and structure',i:[['Exact legal relationship between organization, teachers, Managers and parents','Pending legal review'],['Required invoice and receipt disclosures','Pending legal/accounting'],['Tax treatment and applicable invoicing requirements','Pending professional review'],['SaaS subscription pricing and contracting structure','Pending owner decision'],['Multi-tenant isolation and deployment model','Before multi-organization use']]},
+ {g:'Governance and controls',i:[['Approval of rate exceptions','To be formally defined'],['Whether sensitive payments need a second reviewer','Pending governance decision'],['Minimum cash reserve target','Pending owner/accounting'],['Need for formal double-entry accounting or an accounting integration','Pending accounting decision']]}
+];
+var store={};try{store=JSON.parse(localStorage.getItem('tfm-dec')||'{}')}catch(e){}
+function save(){try{localStorage.setItem('tfm-dec',JSON.stringify(store))}catch(e){}}
+var decs=$('#decs'),total=0;
+DG.forEach(function(g,gi){var w=document.createElement('div');w.className='grp';var h='<h3>'+g.g+'</h3><div class="tbl dec"><table><tbody>';g.i.forEach(function(it,ii){total++;var id='d'+gi+'_'+ii;h+='<tr id="r_'+id+'"><td><input type="checkbox" id="'+id+'" aria-label="Decided"></td><td>'+it[0]+'</td><td>'+it[1]+'</td></tr>'});h+='</tbody></table></div>';w.innerHTML=h;decs.appendChild(w)});
+function prog(){var n=0;for(var k in store)if(store[k])n++;$('#prog').textContent=n+' of '+total+' marked to discuss';DG.forEach(function(g,gi){g.i.forEach(function(it,ii){var id='d'+gi+'_'+ii;var cb=$('#'+id);cb.checked=!!store[id];$('#r_'+id).className=store[id]?'done':''})})}
+decs.addEventListener('change',function(e){if(e.target.type==='checkbox'){store[e.target.id]=e.target.checked;save();prog()}});
+prog();
+
+/* full proposal tools */
+$('#expand').addEventListener('click',function(){document.querySelectorAll('.sec').forEach(function(d){d.open=true})});
+$('#collapse').addEventListener('click',function(){document.querySelectorAll('.sec').forEach(function(d){d.open=false})});
+function openHash(){if(!location.hash)return;var t=null;try{t=document.querySelector(location.hash)}catch(e){}if(t&&t.classList&&t.classList.contains('sec')){t.open=true;t.scrollIntoView()}}
+openHash();window.addEventListener('hashchange',openHash);
+
+/* theme */
+$('#theme').addEventListener('click',function(){var r=document.documentElement;var cur=r.getAttribute('data-theme');if(!cur)cur=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';r.setAttribute('data-theme',cur==='dark'?'light':'dark')});
+
+/* chart tabs */
+var CTN=['Manager commission','Sessions needed','Teacher rate','Unpaid sessions'];
+var ctabs=$('#ctabs'),arts=document.querySelectorAll('[data-chart]');
+function showChart(i){Array.prototype.forEach.call(arts,function(a,k){a.hidden=k!==i});Array.prototype.forEach.call(ctabs.children,function(b,k){b.setAttribute('aria-pressed',k===i)})}
+CTN.forEach(function(n,i){var b=document.createElement('button');b.type='button';b.className='btn';b.textContent=n;b.setAttribute('aria-pressed',i===0);b.addEventListener('click',function(){showChart(i)});ctabs.appendChild(b)});
+
+/* render */
+function render(){
+  var c=calc();
+  CT.forEach(function(k){$('#o_'+k.k).textContent=k.f(S[k.k])});
+  var neg=c.res<0;
+  $('#headline').textContent=neg?'The Manager’s commission is larger than the operational fee, so operations are left with a shortfall of '+sar(-c.res,2):'Of the '+sar(c.P,2)+' the parent pays, '+sar(c.res,2)+' is left for operations';
+  var total=S.T+Math.max(c.O,c.M);
+  function seg(cls,v,label){return '<div class="'+cls+'" style="flex:'+Math.max(v,0.0001)+' 1 0" title="'+label+'">'+(v/total>0.07?label:'')+'</div>'}
+  var sb='';
+  sb+=seg('seg-t',S.T,'Teacher '+fmt(S.T,S.T%1?1:0));
+  if(c.M>0)sb+=seg('seg-m',Math.min(c.M,c.O),'Mgr '+dec(Math.min(c.M,c.O)));
+  if(c.res>0)sb+=seg('seg-o',c.res,'Ops '+dec(c.res));
+  if(neg)sb+=seg('seg-neg',-c.res,'Short '+dec(-c.res));
+  $('#splitbar').innerHTML=sb;
+  $('#legend').innerHTML='<span><i style="background:var(--c1)"></i>Teacher earning '+sar(S.T,2)+'</span><span><i style="background:var(--c2)"></i>Manager compensation '+sar(c.M,2)+'</span><span><i style="background:var('+(neg?'--crit':'--c3')+')"></i>'+(neg?'Shortfall ':'Left for operations ')+sar(Math.abs(c.res),2)+'</span>';
+  var al=$('#alert');
+  if(neg){al.hidden=false;al.textContent='This configuration gives a negative residual. The proposal requires the system to flag it for correction or authorized approval instead of accepting it silently.'}
+  else if(c.res===0){al.hidden=false;al.textContent='This configuration leaves nothing for operations. The system should flag it.'}
+  else al.hidden=true;
+  var dflt=S.def/100;
+  var netPerSession=(1-dflt)*c.res-dflt*(S.T+c.M);
+  var monthNet=S.n*netPerSession-S.exp;
+  var cover=c.be?S.n/c.be:0;
+  var kp='';
+  kp+='<div class="kpi"><span class="k">Parent pays</span><span class="v">'+sar(c.P,2)+'</span><span class="s">per session</span></div>';
+  kp+='<div class="kpi '+(neg?'bad':'')+'"><span class="k">Left for operations</span><span class="v">'+sar(c.res,2)+'</span><span class="s">per session</span></div>';
+  kp+='<div class="kpi '+(c.be?'':'bad')+'"><span class="k">Sessions to cover costs</span><span class="v">'+(c.be?fmt(Math.ceil(c.be)):'None')+'</span><span class="s">'+(c.be?'a month, for '+sar(S.exp)+' of costs':'no volume covers the costs')+'</span></div>';
+  kp+='<div class="kpi '+(c.res>0?'':'bad')+'"><span class="k">Unpaid sessions that wipe it out</span><span class="v">'+(c.res>0?pct(c.dstar*100,1):'0%')+'</span><span class="s">if staff are still paid</span></div>';
+  $('#kpis').innerHTML=kp;
+  $('#more-out').textContent='At '+fmt(S.n)+' sessions a month with '+pct(S.def)+' unpaid, the monthly result after '+sar(S.exp)+' of costs is '+sar(monthNet)+'.';
+
+  /* chart 2: residual vs manager % */
+  var ms=[];for(var m=0;m<=Math.ceil(S.fee)+1;m++)ms.push(m);
+  if(ms.indexOf(S.mgr)<0)ms.push(S.mgr);
+  ms.sort(function(a,b){return a-b});
+  var rv=ms.map(function(m){return resFor(m)});
+  var hi2=ms.indexOf(S.mgr);
+  $('#h2t').textContent='Each extra point of Manager commission takes '+sar(S.T/100,2)+' off what is left for operations';
+  barChart($('#c2'),{cats:ms,vals:rv,hi:hi2,aria:'Residual allocation per session at each Manager rate',yTitle:'SAR per session',xTitle:'Manager compensation, % of teacher rate',tick:function(v){return fmt(v,v%1?1:0)},label:function(v){return (v<0?'−':'')+fmt(Math.abs(v),Math.abs(v)%1?2:0)},cat:function(m){return dec(m)+'%'},color:function(i,v){return v>0?'var(--c3)':v<0?'var(--crit)':'var(--axis)'},tip:function(i){var v=rv[i];return 'Manager '+dec(ms[i])+'%: residual '+sar(v,2)+' per session'+(v<0?' (negative: must be flagged)':v===0?' (nothing left)':'')}});
+  table($('#t2'),['Manager %','Left for operations','Status'],ms.map(function(m,i){return [dec(m)+'%',sar(rv[i],2),rv[i]<0?'Negative, flag':rv[i]===0?'Nothing left':'Positive']}));
+
+  /* chart 3: break-even vs manager % */
+  var bv=ms.map(function(m){var r=resFor(m);return r>0?S.exp/r:null});
+  $('#h3t').textContent=c.be?'At '+pct(S.mgr)+' Manager commission, '+sar(S.exp)+' of expenses needs '+fmt(Math.ceil(c.be))+' sessions a month':'At '+pct(S.mgr)+' Manager commission, no session volume covers the expenses';
+  barChart($('#c3'),{cats:ms,vals:bv,hi:hi2,aria:'Break-even sessions per month at each Manager rate',yTitle:'Sessions per month',xTitle:'Manager compensation, % of teacher rate',tick:function(v){return fmt(v)},label:function(v){return fmt(Math.ceil(v))},cat:function(m){return dec(m)+'%'},color:function(i,v){return 'var(--c1)'},tip:function(i){return bv[i]==null?'Manager '+dec(ms[i])+'%: no break-even, residual is '+sar(resFor(ms[i]),2):'Manager '+dec(ms[i])+'%: '+fmt(Math.ceil(bv[i]))+' sessions a month'}});
+  table($('#t3'),['Manager %','Sessions to cover costs'],ms.map(function(m,i){return [dec(m)+'%',bv[i]==null?'None':fmt(Math.ceil(bv[i]))]}));
+
+  /* chart 5: break-even by teacher rate */
+  var rs=[RATE_MIN,100,120,RATE_MAX];if(rs.indexOf(S.T)<0)rs.push(S.T);rs.sort(function(a,b){return a-b});
+  var rr=rs.map(function(t){return t*(S.fee-S.mgr)/100});
+  var bv5=rr.map(function(r){return r>0?S.exp/r:null});
+  var hi5=rs.indexOf(S.T);
+  var f1=bv5[0],f2=bv5[rs.length-1];
+  $('#h5t').textContent=(f1&&f2)?'Break-even runs from '+fmt(Math.ceil(f2))+' sessions at SAR '+RATE_MAX+' to '+fmt(Math.ceil(f1))+' at SAR '+RATE_MIN:'At these percentages the residual is zero or negative across the permitted rates';
+  barChart($('#c5'),{cats:rs,vals:bv5,hi:hi5,aria:'Break-even sessions per month by teacher rate',yTitle:'Sessions per month',xTitle:'Teacher session rate (SAR)',tick:function(v){return fmt(v)},label:function(v){return fmt(Math.ceil(v))},cat:function(t){return 'SAR '+t},color:function(i){return 'var(--c1)'},tip:function(i){return 'Teacher rate SAR '+rs[i]+': residual '+sar(rr[i],2)+' per session'+(bv5[i]?', break-even '+fmt(Math.ceil(bv5[i]))+' sessions':', no break-even')}});
+  table($('#t5'),['Teacher rate','Left for operations','Sessions to cover costs'],rs.map(function(t,i){return ['SAR '+t,sar(rr[i],2),bv5[i]==null?'None':fmt(Math.ceil(bv5[i]))]}));
+
+  /* chart 4: default risk */
+  var pts=[];for(var d=0;d<=10;d+=1){var dd=d/100;var y=S.n*((1-dd)*c.res-dd*(S.T+c.M));pts.push({x:d,y:y,cur:d===Math.round(S.def)&&Math.abs(S.def-d)<1e-9,tip:pct(d,0)+' unpaid: '+sar(y)+' a month'})}
+  var curPt=pts.filter(function(p){return p.cur})[0];
+  if(!curPt&&S.def%1!==0){var yy=S.n*((1-dflt)*c.res-dflt*(S.T+c.M));pts.push({x:S.def,y:yy,cur:true,tip:pct(S.def)+' unpaid: '+sar(yy)+' a month'});pts.sort(function(a,b){return a.x-b.x})}
+  $('#h4t').textContent=c.res>0?'If staff are paid regardless, '+pct(c.dstar*100,1)+' unpaid sessions erase the whole allocation':'With no positive residual, any unpaid session adds to the loss';
+  lineChart($('#c4'),{pts:pts,exp:S.exp,dstar:c.dstar,aria:'Monthly net result of the operating allocation by share of unpaid sessions',tick:function(v){return fmt(v)}});
+  table($('#t4'),['Unpaid sessions','Net allocation per month','After expenses'],pts.map(function(p){return [pct(p.x,p.x%1?1:0),sar(p.y),sar(p.y-S.exp)]}));
+
+  renderWF();
+}
+render();
+})();
+</script>
+
+</body></html>
