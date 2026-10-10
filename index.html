@@ -204,7 +204,7 @@ a.btn{text-decoration:none;display:inline-block;color:var(--ink)}
 </style>
 
 <div class="bar"><div class="bar-in">
-  <nav aria-label="Sections"><a href="#short">1 Summary</a><a href="#how">2 How it works</a><a href="#model">3 Try it</a><a href="#charts">4 Charts</a><a href="#cash">5 Cash flow</a><a href="#raise">6 Points to consider</a><a href="#decisions">7 Decisions</a><a href="#gloss">Glossary</a><a href="#full">Full proposal</a></nav>
+  <nav aria-label="Sections"><a href="#short">1 Summary</a><a href="#how">2 How it works</a><a href="#model">3 Try it</a><a href="#charts">4 Charts</a><a href="#cash">5 Cash flow</a><a href="#raise">6 Points to consider</a><a href="#decisions">7 Decisions</a><a href="#gloss">Glossary</a><a href="#workflow">System workflow</a><a href="#full">Full proposal</a></nav>
   <button class="btn" id="theme" type="button">Theme</button>
 </div></div>
 
@@ -390,6 +390,181 @@ a.btn{text-decoration:none;display:inline-block;color:var(--ink)}
     <dt>Operating reserve</dt><dd>The minimum cash the organization keeps, set by the owners with accounting advice.</dd>
     <dt>SaaS subscription</dt><dd>The organization's separate payment to the platform operator for the software.</dd>
   </dl></div>
+</section>
+
+
+<section class="blk" id="workflow">
+  <div class="part">System behaviour</div>
+  <h2>How the platform applies the financial model</h2>
+  <p class="intro">This section turns the proposed financial model into an end-to-end operating workflow: who takes each action, which record the platform creates, what changes financially, and what each role is allowed to see. The example percentages and amounts remain illustrative until approved.</p>
+
+  <div class="callout">
+    <strong>Core rule</strong>
+    <p>A scheduled session is not yet a financial transaction. The platform applies the relevant contract and pricing rules when the session outcome is verified. A calculated amount is not automatically earned, billed, collected, paid, or available cash; each state must be represented separately.</p>
+  </div>
+
+  <h3 class="h3">1. Configure the rules before using them</h3>
+  <p>The Admin maintains effective-dated configuration rather than relying on hardcoded business outcomes. Configuration should include:</p>
+  <ul>
+    <li>Minimum and maximum permitted teacher rates, contract approval permissions, and the process for authorized exceptions.</li>
+    <li>Available parent pricing models: teacher rate plus an operational fee, or a configured fixed customer price.</li>
+    <li>Operational-fee rates and scope; Manager compensation rules; and any eligible Admin/staff compensation agreements.</li>
+    <li>Approved prepaid and postpaid plans, eligibility, invoice due-date rules, payment verification requirements, and any authorization needed to override a restriction.</li>
+    <li>Session outcome policies, including attendance, cancellation, late cancellation, rescheduling, disputes, refunds and other exceptions. These remain configurable until the business owner approves the actual rules.</li>
+    <li>Operating-cost categories, required reserves, approval thresholds, and how funds may be allocated to development or expansion.</li>
+  </ul>
+  <p>Every financial record stores the exact contract, pricing model, policy version, rate and configuration that applied at the time. Updating a setting affects future eligible records; it must not silently rewrite existing agreements, finalized charges, earnings, invoices or payments.</p>
+
+  <h3 class="h3">2. Agree and approve the teacher contract</h3>
+  <ol>
+    <li>The Manager drafts an agreement for the teacher, including the session rate and applicable compensation terms.</li>
+    <li>The platform validates the proposed rate against the Admin-configured minimum and maximum.</li>
+    <li>An in-range agreement follows the configured approval workflow. An out-of-range rate is blocked unless an authorized exception path is explicitly enabled and approved.</li>
+    <li>The accepted agreement becomes the source for future eligible session calculations. Amendments are versioned, dated and auditable; earlier sessions retain their original terms.</li>
+  </ol>
+  <p><strong>Result:</strong> an approved, versioned agreement—not an immediate payment. The teacher and authorized Manager can see the applicable terms; the Admin can inspect the complete record and its approval history.</p>
+
+  <h3 class="h3">3. Select a parent plan and establish payment eligibility</h3>
+  <ol>
+    <li>The Parent chooses from plans that the Admin has approved and that are available for the family's arrangement.</li>
+    <li>For a prepaid plan, the Parent submits payment externally and provides the requested reference or evidence. The platform records the report as unverified until the Admin checks the actual receipt.</li>
+    <li>Only a verified and correctly allocated payment increases the verified prepaid balance. An uploaded receipt or Parent's claim alone does not make funds available.</li>
+    <li>For a postpaid plan, the platform records the approved terms, invoice cadence and due-date policy. It tracks receivables and overdue status. Postpaid eligibility and collection-risk rules remain subject to owner approval.</li>
+    <li>Before a session is authorized, the platform checks the applicable plan and its configured eligibility rules. It must not invent a universal rule for low balance, absence or cancellation.</li>
+  </ol>
+  <p><strong>Result:</strong> the Parent sees the selected plan, verified prepaid balance where applicable, outstanding invoices, due dates and payment status. The Manager sees only the operational eligibility information needed to manage the arrangement; the Teacher does not see the Parent's unrelated financial details.</p>
+
+  <h3 class="h3">4. Conduct the session and verify its outcome</h3>
+  <ol>
+    <li>The schedule records that the session was planned; it does not itself create a finalized charge or earning.</li>
+    <li>The relevant participants submit the attendance/session outcome using the platform's defined workflow.</li>
+    <li>The authorized role reviews exceptions or disputes where required. The outcome is finalized only when the configured verification conditions are met.</li>
+    <li>The platform applies the approved policy for the recorded outcome. Attendance, student absence, teacher absence, late cancellation, cancellation, rescheduling and disputed sessions are distinct facts; the system must not hardcode one universal billing result for them.</li>
+  </ol>
+  <p><strong>Result:</strong> a verified session outcome linked to the student, teacher, contract, schedule and relevant policy version. A correction after finalization must create an auditable adjustment or reversal, not erase history.</p>
+
+  <h3 class="h3">5. Calculate separate financial records</h3>
+  <p>After the session outcome qualifies under the approved policy, the system calculates the relevant records independently. For a rate-plus-fee example:</p>
+  <div class="grid g3">
+    <div class="card"><div class="label">Teacher rate</div><div class="big">SAR 100</div><p class="muted">Illustrative teacher compensation basis, subject to the agreement's actual terms.</p></div>
+    <div class="card"><div class="label">Operational fee (5%)</div><div class="big">SAR 5</div><p class="muted">Illustrative customer fee; not automatically profit or available cash.</p></div>
+    <div class="card"><div class="label">Parent charge</div><div class="big">SAR 105</div><p class="muted">Illustrative customer charge before applicable adjustments.</p></div>
+  </div>
+  <p>If the example Manager agreement defines compensation as 2% of the teacher rate, the illustrative Manager amount is SAR 2 and the residual operational allocation is SAR 3 before other costs, collection losses, refunds, taxes or other applicable items. These percentages are examples, not approved rates.</p>
+  <p>The platform creates linked but separate records for the customer charge or prepaid consumption, teacher compensation, Manager compensation where applicable, and operational allocation. The exact point at which compensation becomes earned or payable must follow the approved agreement and policy; the system must not assume that a session completion means staff have already been paid.</p>
+
+  <h3 class="h3">6. Apply the parent's billing arrangement</h3>
+  <div class="grid g2">
+    <div class="card">
+      <h4>Prepaid</h4>
+      <ol>
+        <li>Start from verified, allocated prepaid funds.</li>
+        <li>When a qualifying session is finalized, record the charge against the appropriate balance according to the approved policy.</li>
+        <li>Show the Parent the opening balance, verified top-ups, session charges, adjustments and resulting balance.</li>
+        <li>Keep any disputed charge, refund or unused-balance treatment visible and governed by an explicit policy.</li>
+      </ol>
+    </div>
+    <div class="card">
+      <h4>Postpaid</h4>
+      <ol>
+        <li>Accumulate eligible finalized charges according to the approved billing period.</li>
+        <li>Issue an invoice or statement with its items, total, issue date and due date.</li>
+        <li>Record reported payments separately from payments verified and allocated to the invoice.</li>
+        <li>Calculate outstanding and overdue amounts from the invoice and verified allocations; retain collection actions and adjustments in the audit history.</li>
+      </ol>
+    </div>
+  </div>
+  <p>A payment report, a verified receipt, an allocated payment and a settled invoice are different states. A single payment may be allocated across permitted items, and a partial payment must leave the correct residual outstanding balance.</p>
+
+  <h3 class="h3">7. Record and verify external staff payments</h3>
+  <ol>
+    <li>The platform calculates staff amounts from the approved agreements and qualifying financial records.</li>
+    <li>The system shows the amount's status—calculated, earned, payable or otherwise due—according to the approved contractual rules.</li>
+    <li>An authorized Admin or finance role records an external disbursement with recipient, amount, currency, date, method/reference, related payable items and supporting evidence.</li>
+    <li>The disbursement remains reported/unverified until the authorized reviewer verifies that the transfer actually occurred.</li>
+    <li>Only the verified amount is reflected as paid. Partial payments leave the unpaid remainder visible. Corrections and reversals retain their history.</li>
+  </ol>
+  <p>Recording a payment is not the same as initiating a transfer. The initial release records and verifies external payments; it does not itself move money through a payment gateway or bank integration.</p>
+
+  <h3 class="h3">8. Role-specific financial views</h3>
+  <div class="grid g2">
+    <div class="card">
+      <h4>Parent</h4>
+      <ul><li>Chosen payment plan and its terms.</li><li>Verified prepaid balance or postpaid invoices, due dates and outstanding amount.</li><li>Session-level charges, credits, adjustments and payment allocations.</li><li>Payment submission status and what evidence or action is still needed.</li></ul>
+      <p class="muted">A Parent can access only their own account and linked children within their authorized scope.</p>
+    </div>
+    <div class="card">
+      <h4>Teacher</h4>
+      <ul><li>Own approved contract and applicable rate/terms.</li><li>Assigned sessions and their finalized outcomes.</li><li>Session-level compensation, earning/payable status, adjustments and verified payments.</li><li>Relevant payment references or statements without exposing other staff's financial information.</li></ul>
+    </div>
+    <div class="card">
+      <h4>Manager</h4>
+      <ul><li>Managed teachers' contract status and rate validation/exception workflow.</li><li>Assigned students' operational billing eligibility and session status.</li><li>Own compensation terms, calculated earnings, payable history and verified payments.</li><li>Operational summaries, exceptions and overdue follow-up within the Manager's authorized scope.</li></ul>
+      <p class="muted">Manager visibility into individual Parent financial details must be limited to what the role needs to perform its duties.</p>
+    </div>
+    <div class="card">
+      <h4>Admin</h4>
+      <ul><li>All approved pricing, contracts, plans, policy versions and controlled exceptions.</li><li>Customer charges, prepaid liabilities/balances, invoices, receivables, verified collections and overdue aging.</li><li>Teacher, Manager and eligible Admin/staff compensation, payables, disbursements and verification state.</li><li>Operating costs, reserves, actual cash, forecast, allocations, adjustments and complete audit history.</li></ul>
+    </div>
+  </div>
+
+  <h3 class="h3">9. Admin's organization-level cash and allocation workflow</h3>
+  <p>Per-session allocations are not the same as the organization's cash position. The Admin financial workspace should guide decisions in this order:</p>
+  <ol>
+    <li><strong>Reconcile actual cash.</strong> Start from verified opening balances and actual bank/cash records; account for verified receipts, disbursements, transfers and adjustments. Do not count uncollected invoices as cash.</li>
+    <li><strong>Review incoming collections.</strong> Separate verified received money from reported payments, overdue receivables and forecasts. Show aging, expected collection timing and collection-risk scenarios.</li>
+    <li><strong>Identify commitments.</strong> Show staff payables, supplier obligations, taxes or other approved liabilities, refunds/credits and their due dates. Whether staff compensation is due before customer collection must follow the contract and owner-approved policy.</li>
+    <li><strong>Cover operating costs and required reserves.</strong> Review actual and forecast fixed/variable costs, essential operating expenses and the target reserve. Record each cost with category, date, amount, payee, evidence, approval and payment status.</li>
+    <li><strong>Calculate genuinely allocatable cash.</strong> Derive it from reconciled cash after considering approved commitments, required reserves and planned costs. Label forecasts and assumptions; do not present an estimate as a bank balance.</li>
+    <li><strong>Review discretionary allocation.</strong> Only after the above review should Admin consider development, expansion, equipment, contingency or other approved uses. Proposed allocations require the applicable approval and must be recorded with amount, purpose, date, decision-maker and rationale.</li>
+    <li><strong>Reconcile after action.</strong> Once an expense or allocation is actually paid, record and verify it, update cash and forecast figures, and retain the before/after audit trail.</li>
+  </ol>
+  <p><strong>Important:</strong> the operational allocation is a management calculation, not proof of profit. Profitability requires complete and appropriately classified revenue and costs. Available cash is a liquidity measure; receivables, payables, reserves and forecasts must remain distinct.</p>
+
+  <h3 class="h3">10. Statuses and audit trail</h3>
+  <p>The interface and underlying records must distinguish, at minimum, these concepts where applicable:</p>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Concept</th><th>Meaning in the system</th><th>What it does not mean</th></tr></thead>
+    <tbody>
+      <tr><td>Contracted</td><td>Terms accepted under an approved agreement version.</td><td>That a session occurred or a payment is due now.</td></tr>
+      <tr><td>Calculated</td><td>A rule produced a provisional or final amount.</td><td>That the amount is earned, invoiced or paid.</td></tr>
+      <tr><td>Earned / payable</td><td>Compensation has reached the applicable contractual status.</td><td>That a transfer has occurred.</td></tr>
+      <tr><td>Billed / receivable</td><td>A customer charge is included in the applicable billing record and is owed under its terms.</td><td>That cash has been collected.</td></tr>
+      <tr><td>Reported payment</td><td>A user says payment or disbursement occurred and may provide evidence.</td><td>That the platform has verified receipt or transfer.</td></tr>
+      <tr><td>Verified and allocated</td><td>An authorized reviewer verified the transaction and applied it to the correct balance/item.</td><td>That unrelated invoices or balances are settled.</td></tr>
+      <tr><td>Verified prepaid balance</td><td>Verified funds remain available under the approved prepaid rules.</td><td>That all of those funds are unrestricted organizational profit.</td></tr>
+      <tr><td>Paid</td><td>A verified external disbursement has been recorded against the relevant payable.</td><td>That any remaining partial balance is paid.</td></tr>
+      <tr><td>Available cash</td><td>Reconciled cash after recorded movements, presented separately from forecasts and commitments.</td><td>That all cash is safe to allocate or spend.</td></tr>
+      <tr><td>Allocatable cash</td><td>A decision-support estimate after the approved commitment/reserve policy is applied.</td><td>Profit, guaranteed future income, or a substitute for owner approval.</td></tr>
+    </tbody>
+  </table></div>
+  <p>For each material financial action, preserve who acted, who approved or verified it, when it happened, the amount/currency, linked student/session/contract/invoice/payment/cost records, the applicable rule version, the external reference and evidence, and the reason for any correction. The audit view should answer: <em>who got what, when, where it came from, why it was due, who approved it, what was actually received or paid, and what remains outstanding.</em></p>
+
+  <h3 class="h3">11. System safeguards and acceptance criteria</h3>
+  <ul>
+    <li><strong>Authorization:</strong> enforce role and relationship scope on the server for every read and write; hiding a screen element is not sufficient.</li>
+    <li><strong>Idempotency:</strong> retrying session finalization or billing must not create duplicate charges, earnings or allocations.</li>
+    <li><strong>Controlled transitions:</strong> validate every state change and require explicit authority for verification, overrides, refunds, write-offs and adjustments.</li>
+    <li><strong>Immutable history:</strong> finalized financial records are corrected with linked reversals/adjustments and reasons, not silently overwritten or deleted.</li>
+    <li><strong>Consistent calculation:</strong> use the same authoritative server-side calculation and stored rule version across dashboards, statements, invoices and reports; use decimal-safe money handling and explicit currency.</li>
+    <li><strong>Separation:</strong> customer billing, prepaid funds, staff compensation, operating allocations, expenses/cash and SaaS subscription billing remain separate financial domains linked by references rather than collapsed into one balance.</li>
+    <li><strong>Verification:</strong> reported payments do not change verified balances or paid status until the authorized verification and allocation steps succeed.</li>
+    <li><strong>Traceability:</strong> every charge, earning, receipt, payment, cost, adjustment and discretionary allocation can be traced to its source record, policy, actor and evidence.</li>
+    <li><strong>Reconciliation:</strong> totals reconcile across session ledgers, customer statements, staff statements and cash records, while unpaid receivables and payables remain visible.</li>
+    <li><strong>Testing:</strong> cover prepaid and postpaid flows, partial payments, duplicate retries, rejected/out-of-range contracts, authorized exceptions, session corrections, refunds/credits, failed verification, overdue invoices, partial staff payments, permission boundaries and cash/ledger reconciliation.</li>
+  </ul>
+
+  <h3 class="h3">12. Decisions that remain open</h3>
+  <p>The system should be designed to support these policies without inventing them. The responsible owners and legal/accounting advisers must decide and document them before the corresponding rules are enabled:</p>
+  <ul>
+    <li>Who bears collection risk if a postpaid Parent never pays, and whether staff compensation can become due before collection.</li>
+    <li>The legal contracting party and the legal classification of teachers, Managers and other paid staff.</li>
+    <li>Invoice, receipt, tax/VAT, accounting and record-retention requirements in the applicable jurisdictions.</li>
+    <li>Refunds, unused prepaid balances, disputes, no-shows, absence, late cancellation, rescheduling and session correction rules.</li>
+    <li>Who may be offered postpaid terms, credit limits if any, and who approves exceptions, write-offs and refunds.</li>
+    <li>Compensation triggers and pay schedules for each role; required reserves and approval thresholds for expenses and discretionary allocations.</li>
+    <li>Whether formal accounting software, bank feeds, e-invoicing or payment-provider integration will be added later. These are not assumed in the initial release.</li>
+  </ul>
 </section>
 
 <section class="blk" id="full">
