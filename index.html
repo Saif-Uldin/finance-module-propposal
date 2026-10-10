@@ -242,7 +242,7 @@ a.btn{text-decoration:none;display:inline-block;color:var(--ink)}
   <div class="short">
     <div class="card"><div class="big">SAR 3 of 105</div><p>A parent pays SAR 105 for one session. SAR 100 goes to the teacher and SAR 2 to the Manager. Only SAR 3 is left to run operations.</p></div>
     <div class="card"><div class="big">1,000 sessions</div><p>That is how many sessions a month it takes for SAR 3 each to cover SAR 3,000 of monthly costs.</p></div>
-    <div class="card"><div class="big">3 unpaid in 100</div><p>If staff are still paid when a parent never pays, about 3 unpaid sessions in every 100 wipe out that SAR 3. Who carries this risk is not yet decided.</p></div>
+    <div class="card"><div class="big">3 unpaid in 100</div><p>Because staff compensation is not payable before customer collection is verified, the key exposure is the collection loss on a Parent-specific postpaid approval. The Admin who authorizes postpaid for that Parent accepts that risk.</p></div>
   </div>
   <div class="cta"><a class="btn pri" href="#model">Try other numbers</a><a class="btn" href="#raise">Go to the meeting points</a></div>
 </section>
@@ -263,8 +263,8 @@ a.btn{text-decoration:none;display:inline-block;color:var(--ink)}
   <div class="two">
     <div class="card"><h3 class="h3">Model A: rate plus fee</h3><p>The parent pays the teacher's rate plus a percentage fee. At SAR 100 and 5%, the parent pays SAR 105. This is the model drawn in the charts.</p></div>
     <div class="card"><h3 class="h3">Model B: fixed price</h3><p>The parent pays a fixed amount the organization sets. Teacher and Manager pay are still calculated from their own agreements. No fee is added automatically.</p></div>
-    <div class="card"><h3 class="h3">Prepaid</h3><p>The parent pays in advance. A session is allowed only against a verified payment, not just an uploaded receipt. Unused balance, refunds and cancellations need a policy decision.</p></div>
-    <div class="card"><h3 class="h3">Postpaid</h3><p>The parent pays after the sessions, on an invoice with a due date. The platform tracks what is outstanding and overdue. Who may be postpaid, and who approves it, is not yet decided.</p></div>
+    <div class="card"><h3 class="h3">Prepaid</h3><p>The parent pays in advance. A session is allowed only against a verified payment, not just an uploaded receipt. Unused prepaid balance remains recorded on the Parent account. A refund requires an Admin-managed transfer and proof, followed by the Parent confirming receipt.</p></div>
+    <div class="card"><h3 class="h3">Postpaid</h3><p>The Parent pays after sessions on an invoice with a due date. Only the Admin can approve postpaid, separately for each Parent. Overdue accounts are tracked, and the platform can hold upcoming sessions until the overdue issue is resolved.</p></div>
   </div>
   <h3 class="h3" style="margin-top:22px">How a session becomes money</h3>
   <p class="intro" style="margin-bottom:12px">Select a stage. The money side starts when a session is verified, not when it is scheduled.</p>
@@ -364,8 +364,8 @@ a.btn{text-decoration:none;display:inline-block;color:var(--ink)}
 </section>
 
 <section class="blk" id="decisions">
-  <div class="part">Part 7 of 7</div><h2>Open decisions</h2>
-  <p class="intro">The 14 items the document leaves open, grouped by theme. Tick the ones you want to raise in the meeting. Ticks are saved in this browser only and are not sent to anyone.</p>
+  <div class="part">Decision register</div><h2>Confirmed rules and remaining governance checks</h2>
+  <p class="intro">The remaining governance items are grouped by theme. The business rules supplied by the owner have been moved into the confirmed operating model. Tick any remaining items you want to raise. Ticks are saved in this browser only and are not sent to anyone.</p>
   <div class="card">
     <div class="prog" id="prog"></div>
     <div id="decs"></div>
@@ -381,11 +381,11 @@ a.btn{text-decoration:none;display:inline-block;color:var(--ink)}
     <dt>Manager commission</dt><dd>A percentage of the teacher's session rate that the Manager earns under their own agreement.</dd>
     <dt>Left for operations</dt><dd>The operational fee minus the Manager commission. The proposal calls it the residual operating allocation. It pays for hosting, support and administration. It is not profit.</dd>
     <dt>Qualifying session</dt><dd>A session whose outcome an authorized workflow has verified. Only these create financial records.</dd>
-    <dt>Verified payment</dt><dd>A payment the Admin has confirmed was actually received, for the right amount. Only verified payments reduce a balance.</dd>
+    <dt>Verified payment</dt><dd>A payment the Admin has confirmed against the organization's bank account. Only verified payments reduce the relevant balance and can trigger invoice issuance.</dd>
     <dt>Receivable</dt><dd>Money parents owe the organization.</dd>
     <dt>Payable</dt><dd>Money the organization owes teachers, Managers and eligible staff.</dd>
     <dt>Overdue</dt><dd>The due date has passed and a balance remains.</dd>
-    <dt>Collection risk</dt><dd>The chance that a parent never pays, and who bears the loss. This is undecided.</dd>
+    <dt>Collection risk</dt><dd>For postpaid accounts, the Admin who explicitly approves postpaid for that individual Parent accepts the collection risk under this operating model.</dd>
     <dt>Sessions to cover costs</dt><dd>Monthly costs divided by the amount left per session. Also called break-even volume.</dd>
     <dt>Operating reserve</dt><dd>The minimum cash the organization keeps, set by the owners with accounting advice.</dd>
     <dt>SaaS subscription</dt><dd>The organization's separate payment to the platform operator for the software.</dd>
@@ -429,7 +429,7 @@ a.btn{text-decoration:none;display:inline-block;color:var(--ink)}
     <li>The Parent chooses from plans that the Admin has approved and that are available for the family's arrangement.</li>
     <li>For a prepaid plan, the Parent submits payment externally and provides the requested reference or evidence. The platform records the report as unverified until the Admin checks the actual receipt.</li>
     <li>Only a verified and correctly allocated payment increases the verified prepaid balance. An uploaded receipt or Parent's claim alone does not make funds available.</li>
-    <li>For a postpaid plan, the platform records the approved terms, invoice cadence and due-date policy. It tracks receivables and overdue status. Postpaid eligibility and collection-risk rules remain subject to owner approval.</li>
+    <li>For a postpaid plan, the platform requires an explicit Admin approval tied to that individual Parent, then records the agreed terms, invoice cadence and due date. The Admin who authorizes postpaid accepts the collection risk for that Parent. Postpaid is never enabled globally by a single switch.</li>
     <li>Before a session is authorized, the platform checks the applicable plan and its configured eligibility rules. It must not invent a universal rule for low balance, absence or cancellation.</li>
   </ol>
   <p><strong>Result:</strong> the Parent sees the selected plan, verified prepaid balance where applicable, outstanding invoices, due dates and payment status. The Manager sees only the operational eligibility information needed to manage the arrangement; the Teacher does not see the Parent's unrelated financial details.</p>
@@ -557,14 +557,64 @@ a.btn{text-decoration:none;display:inline-block;color:var(--ink)}
   <h3 class="h3">12. Decisions that remain open</h3>
   <p>The system should be designed to support these policies without inventing them. The responsible owners and legal/accounting advisers must decide and document them before the corresponding rules are enabled:</p>
   <ul>
-    <li>Who bears collection risk if a postpaid Parent never pays, and whether staff compensation can become due before collection.</li>
-    <li>The legal contracting party and the legal classification of teachers, Managers and other paid staff.</li>
-    <li>Invoice, receipt, tax/VAT, accounting and record-retention requirements in the applicable jurisdictions.</li>
-    <li>Refunds, unused prepaid balances, disputes, no-shows, absence, late cancellation, rescheduling and session correction rules.</li>
-    <li>Who may be offered postpaid terms, credit limits if any, and who approves exceptions, write-offs and refunds.</li>
-    <li>Compensation triggers and pay schedules for each role; required reserves and approval thresholds for expenses and discretionary allocations.</li>
-    <li>Whether formal accounting software, bank feeds, e-invoicing or payment-provider integration will be added later. These are not assumed in the initial release.</li>
+    <li>The timing and schedule of staff compensation still follow the applicable agreements, but staff compensation is not payable before the corresponding customer payment has been collected and verified.</li>
+    <li>The exact legal drafting and classification of the marketplace-style relationship should be reflected in the applicable agreements; the intended commercial model is described in the confirmed operating decisions.</li>
+    <li>The configured tax rate and invoice calculation are business settings. The actual invoice format and issuance process must be implemented to meet applicable e-invoicing and tax requirements.</li>
+    <li>Detailed absence, cancellation, rescheduling and session-correction policies are outside the current scope unless separately specified. The confirmed unused-balance refund workflow is documented in the operating decisions.</li>
+    <li>Only the Admin may approve postpaid, individually per Parent. Additional credit-limit, write-off and refund policies are not being expanded in this release beyond the confirmed refund workflow and upcoming-session hold.</li>
+    <li>Exact compensation schedule details and internal approval thresholds remain governed by the relevant agreements and Admin configuration; staff payments cannot precede verified customer collection.</li>
+    <li>Payment processing and automatic bank integration are out of scope for the initial release. The platform records uploaded evidence and manual Admin verification; invoice generation is included in the described billing workflow.</li>
   </ul>
+</section>
+
+<section class="blk" id="confirmed-model">
+  <div class="part">Owner decisions · Updated 10 October 2026</div>
+  <h2>Confirmed operating decisions</h2>
+  <p class="intro">These are the owner's current decisions for how the platform must behave. They replace the earlier “unresolved” labels for these topics. This section describes the initial product scope, not legal advice.</p>
+  <div class="card">
+    <h3 class="h3">1. Postpaid and collection risk</h3>
+    <ul>
+      <li><strong>Admin approval is per Parent.</strong> Only the Admin can authorize postpaid, and each approval applies to a named Parent. There is no global postpaid enablement that automatically grants every Parent credit.</li>
+      <li><strong>Risk follows the approval.</strong> The Admin who permits postpaid for that Parent accepts the collection risk if the Parent never pays. The system must retain who approved it, when, and the terms that were accepted.</li>
+      <li><strong>No staff payment before collection.</strong> Teacher and Manager compensation is not payable before the related customer payment has actually been collected and verified. Calculated or earned amounts must not be displayed as already paid.</li>
+      <li><strong>Overdue enforcement is deliberately limited.</strong> The platform tracks overdue balances and may hold the Parent's upcoming session from starting. Legal proceedings, debt recovery and other legal consequences are outside the current scope.</li>
+    </ul>
+    <h3 class="h3">2. Unused prepaid balance and refunds</h3>
+    <ol>
+      <li>Unused prepaid funds remain visible as a balance on the Parent's account; they do not disappear at the end of a billing period.</li>
+      <li>The Parent submits a refund request. The platform records the amount, reason, status and request history for Admin review.</li>
+      <li>The Admin executes the refund transfer outside the platform and uploads the transfer proof, including the relevant date, amount and reference.</li>
+      <li>The Parent must separately confirm that the money was received. Uploading transfer proof alone does not close the request.</li>
+      <li>The request closes only after the Admin's transfer evidence is recorded and the Parent's receipt confirmation is recorded. The platform itself does not move money.</li>
+    </ol>
+    <h3 class="h3">3. Marketplace-style commercial relationship</h3>
+    <ul>
+      <li>The organization operates as a service hub/marketplace: Teachers offer services through the organization's platform in return for an agreed percentage or fee from the income, under the applicable agreement.</li>
+      <li>A Manager manages the Teachers assigned to them and receives a configured/agreed percentage of the relevant income, as set out in the Manager's agreement.</li>
+      <li>The exact contractual wording and legal classification should be represented in the organization's agreements. The product must calculate from the approved agreement, not infer a relationship from a role name.</li>
+    </ul>
+    <h3 class="h3">4. Payment verification and invoice issuance</h3>
+    <ol>
+      <li>The customer uploads payment receipt/evidence and supplies any required transfer reference.</li>
+      <li>The Admin manually verifies the claim against the organization's bank account. An uploaded receipt alone is not proof that funds arrived.</li>
+      <li>After the Admin verifies the funds, the payment is recorded as received/allocated and the platform issues its e-invoice using the configured invoice and tax settings.</li>
+      <li>The system keeps the uploaded evidence, verification decision, verifier, timestamp, bank/reference details and invoice link in the audit trail. Corrections must be traceable rather than silently overwriting history.</li>
+    </ol>
+    <h3 class="h3">5. Tax configuration and parent bill</h3>
+    <ul>
+      <li>The Admin configures the applicable tax rate/policy in the system.</li>
+      <li>The Parent's bill calculation shows the applicable tax as a separate, understandable component of the bill total, rather than hiding it inside a staff rate or operational allocation.</li>
+      <li>The configuration must be applied consistently to the relevant bill/invoice. The implementation must support the applicable e-invoice format and tax requirements; a configurable rate is not a substitute for required compliance.</li>
+    </ul>
+    <h3 class="h3">6. Hosting and tenant isolation</h3>
+    <ul>
+      <li>The provider hosts the service. Hosting is part of the SaaS service relationship; the tutoring organization does not self-host its tenant as the normal service model.</li>
+      <li>Each tenant receives an independent server cluster. Application services, databases, files, credentials, secrets, backups and operational access must be isolated per tenant rather than shared in one tenant's runtime.</li>
+      <li>SaaS subscription billing remains separate from tutoring customer billing and staff compensation. Subscription pricing is set in the provider–tenant commercial agreement.</li>
+    </ul>
+    <h3 class="h3">7. Scope boundary</h3>
+    <p>For this release, do not expand into legal debt collection, legal proceedings, automated payment transfers, payment-gateway integration, or unrelated financial/accounting features. The platform records evidence, applies the confirmed rules, performs the calculations, issues the configured invoice, and maintains the audit trail.</p>
+  </div>
 </section>
 
 <section class="blk" id="full">
@@ -1466,11 +1516,8 @@ invoices, payments, and outstanding balances.</p>
 with the tutoring organization's operational allocation. Nor should the
 subscription automatically be deducted from a parent's tutoring
 payment.</p>
-<p>The initial release does not include SaaS subscription checkout or
-automatic collection.</p>
-<p>The project owners must approve the SaaS pricing model and the
-tenant-isolation architecture before the platform is offered to multiple
-independent tutoring organizations.</p>
+<p>The service is hosted by the platform provider, so the tutoring organization is a hosted customer with a separate SaaS subscription arrangement. Subscription payment collection and automated transfers remain outside the initial release unless separately added.</p>
+<p>SaaS pricing is a separate commercial agreement between the provider and each tenant. Each tenant is deployed in an independent server cluster; tenant data and services must not be shared across those clusters.</p>
 </div></details>
 <details class="sec" id="s16"><summary><span class="secn">16</span><span class="sect">Financial records and technical implementation</span></summary><div class="prose"><p>The following conceptual records should be considered during
 technical design:</p>
@@ -1578,8 +1625,7 @@ obligation</td>
 actual design must follow the repository's established conventions and
 the approved tenancy and authorization architecture.</p>
 </div></details>
-<details class="sec" id="s17"><summary><span class="secn">17</span><span class="sect">Decisions reserved for the owner and legal review</span></summary><div class="prose"><p>The following matters remain open and must not be silently decided by
-the technical team.</p>
+<details class="sec" id="s17"><summary><span class="secn">17</span><span class="sect">Decisions reserved for the owner and legal review</span></summary><div class="prose"><p>The core business decisions listed in the meeting table have now been supplied and are reflected below. Only the limited governance and implementation items explicitly retained as open remain undecided; the technical team must not invent additional business rules.</p>
 <div class="tbl"><table>
 <colgroup>
 <col style="width: 50%" />
@@ -1594,37 +1640,37 @@ the technical team.</p>
 <tbody>
 <tr class="odd">
 <td>Who carries the collection risk when a parent never pays?</td>
-<td><strong>Unresolved — owner/legal decision</strong></td>
+<td><strong>Confirmed: the Admin who approves postpaid for that specific Parent</strong></td>
 </tr>
 <tr class="even">
 <td>Whether staff compensation is payable before customer
 collection</td>
-<td><strong>Unresolved — contract and legal decision</strong></td>
+<td><strong>Confirmed: no; customer collection must be verified first</strong></td>
 </tr>
 <tr class="odd">
 <td>Exact legal relationship between organization, teachers, Managers,
 and parents</td>
-<td>Pending legal review</td>
+<td>Marketplace/service-hub model: Teachers offer services through the platform for an agreed percentage; Managers oversee assigned Teachers for an agreed percentage. Contract wording must reflect the model.</td>
 </tr>
 <tr class="even">
 <td>Required invoice and receipt disclosures</td>
-<td>Pending legal/accounting review</td>
+<td>Platform invoice is issued after manual Admin verification against the bank account; implement the required e-invoice format.</td>
 </tr>
 <tr class="odd">
 <td>Tax treatment and applicable invoicing requirements</td>
-<td>Pending professional review</td>
+<td>Admin configures the applicable tax policy/rate; the Parent bill shows tax. Invoice implementation must meet applicable requirements.</td>
 </tr>
 <tr class="even">
-<td>Prepaid unused balance, refunds, and cancellation rules</td>
-<td>Pending policy approval</td>
+<td>Prepaid unused balance and refunds</td>
+<td>Unused balance remains on account. Admin uploads external transfer proof; Parent confirms receipt; then request closes.</td>
 </tr>
 <tr class="odd">
 <td>Postpaid eligibility and approval authority</td>
-<td>Pending owner approval</td>
+<td>Only Admin; approval is specific to each Parent, not global.</td>
 </tr>
 <tr class="even">
 <td>Overdue escalation and collection procedures</td>
-<td>Pending policy approval</td>
+<td>Upcoming session may be held from starting. Legal recovery and proceedings are out of scope.</td>
 </tr>
 <tr class="odd">
 <td>Approval of rate exceptions</td>
@@ -1645,11 +1691,11 @@ integration</td>
 </tr>
 <tr class="odd">
 <td>SaaS subscription pricing and contracting structure</td>
-<td>Pending owner decision</td>
+<td>Provider-hosted service; subscription is a separate provider–tenant agreement.</td>
 </tr>
 <tr class="even">
 <td>Multi-tenant isolation and deployment model</td>
-<td>Must be resolved before multi-organization SaaS use</td>
+<td>Each tenant gets an independent server cluster.</td>
 </tr>
 </tbody>
 </table></div>
@@ -1707,17 +1753,14 @@ domain.</p>
 without assuming that every outstanding invoice is cash, that every
 earned amount has been paid, or that the operational fee represents
 profit.</p>
-<p>It is ready for discussion with the project owners, legal counsel,
-and accounting adviser. The final contracts, collection-risk allocation,
-payment obligations, tax treatment, and financial policies must be
-approved before they are treated as binding business rules.</p>
+<p>The operating direction is now specified for the current scope: per-Parent postpaid approval and risk ownership, no staff compensation before verified customer collection, a two-party refund closure workflow, overdue-session holds, configured tax in the bill calculation, manual receipt verification before issuing the platform invoice, a hosted SaaS relationship, and independent server clusters per tenant. The implementation should encode these rules while ensuring that required invoices and tax settings are configured in line with applicable requirements.</p>
 </div></details>
 </section>
 
 <div class="foot">
-  <p>The meeting is for your questions and for the open decisions in Part 7. Note anything you want to raise as you read.</p>
+  <p>The owner decisions above define the current intended behaviour. Use the decision register for the remaining governance checks; do not treat those checks as permission to invent additional business policies.</p>
   <p>Charts are drawn from the document's illustrative rates (SAR 80 to 150 permitted teacher rate, 5% operational fee, 2% Manager commission, SAR 3,000 monthly expense target). Nothing here is an approved commercial term.</p>
-  <p>The default-risk chart and the four cash-flow situations include assumptions added for discussion. The proposal itself leaves collection risk, and whether staff are paid before customers, undecided.</p>
+  <p>The default-risk chart and cash-flow examples are illustrative. The confirmed rule is that the Admin approving postpaid for an individual Parent accepts that Parent’s collection risk, and staff compensation is not payable before the related customer payment is collected and verified.</p>
 </div>
 </div>
 <div id="tip" role="tooltip"></div>
@@ -1939,15 +1982,27 @@ PTS.forEach(function(p,i){var d=document.createElement('details');d.className='p
 
 /* decisions */
 var DG=[
- {g:'Money at risk',i:[['Who carries the collection risk when a parent never pays?','Unresolved, owner/legal'],['Whether staff compensation is payable before customer collection','Unresolved, contract/legal'],['Prepaid unused balance, refunds and cancellation rules','Pending policy approval'],['Overdue escalation and collection procedures','Pending policy approval'],['Postpaid eligibility and approval authority','Pending owner approval']]},
- {g:'Legal, tax and structure',i:[['Exact legal relationship between organization, teachers, Managers and parents','Pending legal review'],['Required invoice and receipt disclosures','Pending legal/accounting'],['Tax treatment and applicable invoicing requirements','Pending professional review'],['SaaS subscription pricing and contracting structure','Pending owner decision'],['Multi-tenant isolation and deployment model','Before multi-organization use']]},
- {g:'Governance and controls',i:[['Approval of rate exceptions','To be formally defined'],['Whether sensitive payments need a second reviewer','Pending governance decision'],['Minimum cash reserve target','Pending owner/accounting'],['Need for formal double-entry accounting or an accounting integration','Pending accounting decision']]}
+ {g:'Confirmed operating rules',i:[
+  ['Postpaid is enabled only by Admin, per Parent; approving Admin carries collection risk','Confirmed by owner'],
+  ['Staff compensation is not payable before customer collection is verified','Confirmed by owner'],
+  ['Unused prepaid balance remains on account; refund closes after Admin proof and Parent receipt confirmation','Confirmed by owner'],
+  ['Overdue handling may hold the upcoming session; legal recovery is out of scope','Confirmed by owner'],
+  ['Uploaded receipt + manual bank verification precedes received status and e-invoice issuance','Confirmed by owner'],
+  ['Admin-configured tax is shown in the Parent bill','Confirmed by owner'],
+  ['Marketplace-style Teacher and Manager agreements define percentage compensation','Confirmed by owner'],
+  ['Provider hosts each tenant in an independent server cluster','Confirmed by owner']
+ ]},
+ {g:'Remaining governance checks',i:[
+  ['Approval path for out-of-range teacher-rate exceptions','Confirm who can approve and what evidence is required'],
+  ['Whether sensitive transfers need a second reviewer','Optional governance control'],
+  ['Minimum cash reserve target and expense approval thresholds','Set internally before financial dashboard rollout']
+ ]}
 ];
-var store={};try{store=JSON.parse(localStorage.getItem('tfm-dec')||'{}')}catch(e){}
-function save(){try{localStorage.setItem('tfm-dec',JSON.stringify(store))}catch(e){}}
+var store={};try{store=JSON.parse(localStorage.getItem('tfm-dec-v2')||'{}')}catch(e){}
+function save(){try{localStorage.setItem('tfm-dec-v2',JSON.stringify(store))}catch(e){}}
 var decs=$('#decs'),total=0;
-DG.forEach(function(g,gi){var w=document.createElement('div');w.className='grp';var h='<h3>'+g.g+'</h3><div class="tbl dec"><table><tbody>';g.i.forEach(function(it,ii){total++;var id='d'+gi+'_'+ii;h+='<tr id="r_'+id+'"><td><input type="checkbox" id="'+id+'" aria-label="Decided"></td><td>'+it[0]+'</td><td>'+it[1]+'</td></tr>'});h+='</tbody></table></div>';w.innerHTML=h;decs.appendChild(w)});
-function prog(){var n=0;for(var k in store)if(store[k])n++;$('#prog').textContent=n+' of '+total+' marked to discuss';DG.forEach(function(g,gi){g.i.forEach(function(it,ii){var id='d'+gi+'_'+ii;var cb=$('#'+id);cb.checked=!!store[id];$('#r_'+id).className=store[id]?'done':''})})}
+DG.forEach(function(g,gi){var w=document.createElement('div');w.className='grp';var h='<h3>'+g.g+'</h3><div class="tbl dec"><table><tbody>';g.i.forEach(function(it,ii){total++;var id='d'+gi+'_'+ii;h+='<tr id="r_'+id+'"><td><input type="checkbox" id="'+id+'" aria-label="Reviewed or follow-up"></td><td>'+it[0]+'</td><td>'+it[1]+'</td></tr>'});h+='</tbody></table></div>';w.innerHTML=h;decs.appendChild(w)});
+function prog(){var n=0;for(var k in store)if(store[k])n++;$('#prog').textContent=n+' of '+total+' marked reviewed / for follow-up';DG.forEach(function(g,gi){g.i.forEach(function(it,ii){var id='d'+gi+'_'+ii;var cb=$('#'+id);cb.checked=!!store[id];$('#r_'+id).className=store[id]?'done':''})})}
 decs.addEventListener('change',function(e){if(e.target.type==='checkbox'){store[e.target.id]=e.target.checked;save();prog()}});
 prog();
 
